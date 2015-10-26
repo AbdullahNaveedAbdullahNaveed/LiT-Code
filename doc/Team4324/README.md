@@ -1,0 +1,1 @@
+This folder contains all documentation and important software-related documents for our team, 4324 Lost in Time.
