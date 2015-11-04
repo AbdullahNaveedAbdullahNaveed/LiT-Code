@@ -9,4 +9,10 @@ package com.lmrobotics.litcode.autonomous.actions;
  * coordinate to move to, like moving to the left or right beacon
  * button based on sensor results.
  */
+public class Actions extends EPS
+{
+    public Actions()
+    {
 
+    }
+}
