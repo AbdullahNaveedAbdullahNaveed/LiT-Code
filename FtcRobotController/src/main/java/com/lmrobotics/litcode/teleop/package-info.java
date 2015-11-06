@@ -1,2 +1,2 @@
-/** Package containing all autonomous-related classes. */
+/** Package containing all tele-op classes. */
 package com.lmrobotics.litcode.teleop;
