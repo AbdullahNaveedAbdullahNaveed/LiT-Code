@@ -9,9 +9,9 @@ public class Motor
      * The maximum value for motor power.  Useful for algorithms including motor
      * power scaling and course correction. (MAX_POWER * -1 = max power in reverse)
      */
-    public static final int MAX_POWER= 20;
+    public static final int MAX_POWER= 100;
     /**
-     * Indicate that the motor should behave normally (it’s type doesn’t matter much, but all ‘MODE_’
+     * Indicate that the motor should behave normally (itï¿½s type doesnï¿½t matter much, but all ï¿½MODE_ï¿½
      * constants need to be the same type to be passed in to setMode)
      * TODO establish values
      */
@@ -31,6 +31,8 @@ public class Motor
      */
     public Motor(String servoName)
     {
+        public static final int MODE_NORMAL = 20;
+        public static final int MODE_REVERSE = -20;
         setMode(MODE_NORMAL);
     }
 
@@ -51,6 +53,7 @@ public class Motor
      */
     public synchronized void setPower(int power)
     {
+        setMode(mode);
     }
 
     /**
@@ -59,21 +62,21 @@ public class Motor
      */
     public synchronized void setMode(??? mode)
     {
-
+        setMode(mode);
     }
 
     /**
-     *Stop the motor, syntactically equivalent to ‘setPower(0)’.
+     *Stop the motor, syntactically equivalent to ï¿½setPower(0)ï¿½.
      * TODO
      */
     public synchronized void stop()
     {
-
+        setPower(0);
     }
     /**
      * Get the current power level of the motor (with MAX_POWER as the maximum).
      * TODO
      */
-    public synchronized void int getPower
+    public synchronized void int getPower;
 
 }

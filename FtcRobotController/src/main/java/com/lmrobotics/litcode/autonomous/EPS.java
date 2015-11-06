@@ -16,6 +16,8 @@ public abstract class EPS implements Runnable
     protected ThreadClock clock;
     /** The queue of events for an EPS. */
     public volatile ConcurrentLinkedQueue<AutonomousEvent> queue;
+    /** If this EPS should keep running or stop. */
+    protected boolean keepRunning = true;
 
     /** Normal EPS setup. */
     public EPS()
@@ -51,12 +53,23 @@ public abstract class EPS implements Runnable
     @Override
     public void run()
     {
-        while (true)
+        while (keepRunning)
         {
+            // Make sure we stop ASAP
+            if (!keepRunning)
+            {
+                break;
+            }
             // Run one iteration of the operations in the child class
             oneCycle();
             // Finish this cycle and start the next
             clock.nextCycle();
         }
+    }
+
+    /** Stop this EPS from running. */
+    public void stop()
+    {
+        keepRunning = false;
     }
 }
