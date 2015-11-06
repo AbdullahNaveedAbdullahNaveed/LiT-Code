@@ -1,5 +1,7 @@
 package com.lmrobotics.litcode.autonomous.actions;
 
+import com.lmrobotics.litcode.autonomous.EPS;
+
 /**
  *To complete events other than navigating around on the field.
  * This can include simple actions, like moving a servo to a set
@@ -15,4 +17,18 @@ public class Actions extends EPS
     {
 
     }
+
+    @Override
+    public void init()
+    {
+
+    }
+
+    @Override
+    public void oneCycle()
+    {
+
+    }
+
+    
 }
