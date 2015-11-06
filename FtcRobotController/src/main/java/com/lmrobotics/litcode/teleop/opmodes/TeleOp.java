@@ -6,6 +6,8 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
  */
 public class TeleOp extends OpMode
 {
+    public DriveSystem drive;
+
     @Override
     public void init()
     {
@@ -15,7 +17,8 @@ public class TeleOp extends OpMode
     @Override
     public void loop()
     {
-
+    drive.setleft(gamepad1.left_stick_y);
+    drive.setright(gamepad1.right_stick_y);
     }
 
 }
