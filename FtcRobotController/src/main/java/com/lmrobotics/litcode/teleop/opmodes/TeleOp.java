@@ -25,15 +25,27 @@ public class TeleOp extends OpMode
     {
         drive.setLeft(gamepad1.left_stick_y / scaleSpeed);
         drive.setRight(gamepad1.right_stick_y / scaleSpeed);
-        if (gamepad1.a) {
+        if (gamepad1.a)
+        {
             scaleSpeed =  2;
         }
-        else {
+        else
+        {
             scaleSpeed = 1;
         }
-
-        arm.armUp(gamepad1.right_trigger);
-        arm.armDown(gamepad1.left_trigger);
+        
+        if (gamepad1.right_trigger)
+        {
+            arm.armUp(20);
+        }
+        else if (gamepad1.left_trigger)
+        {
+           arm.armDown(-20);
+        }
+        else
+        {
+          arm.armUp(0);
+        }
     }
 
 }
