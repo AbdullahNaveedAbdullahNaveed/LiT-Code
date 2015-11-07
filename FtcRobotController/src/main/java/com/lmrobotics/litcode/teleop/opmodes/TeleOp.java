@@ -1,6 +1,7 @@
 package com.lmrobotics.litcode.teleop.opmodes;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.lmrobotics.litcode.devices.DriveSystem;
 
 /** Enables control of the robot with the gamepad
  */
