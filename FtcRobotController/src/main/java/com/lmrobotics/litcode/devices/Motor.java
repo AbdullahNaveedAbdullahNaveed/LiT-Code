@@ -41,7 +41,7 @@ public class Motor
      * TODO
      * @param motorName
      */
-    public Motor(String motorName,??? mode)
+    public Motor(String motorName, mode)
     {
         setMode(mode);
     }
@@ -60,7 +60,7 @@ public class Motor
      * Change how the motor is running (for example reverse it).
      * TODO
      */
-    public synchronized void setMode(??? mode)
+    public synchronized void setMode(mode)
     {
         setMode(mode);
     }
