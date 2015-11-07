@@ -9,12 +9,12 @@ public class Servo
     /** Provide the maximum position value a servo can be set to.
      * TODO determine what max position should be.
      */
-    public static final int MAX_POS= 20;
+    public static final int MAX_POS = 20;
     /**
      * The lowest position value a servo can be set to.
      * TODO determine what min position should be.
      */
-    public static final int MIN_POS= -20;
+    public static final int MIN_POS = 0;
 
     /** Constructor will set starting position and recording
      * what the servo will be accessing
