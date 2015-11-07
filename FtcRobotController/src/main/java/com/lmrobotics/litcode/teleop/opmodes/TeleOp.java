@@ -11,14 +11,20 @@ public class TeleOp extends OpMode
     @Override
     public void init()
     {
-
+        int scaleSpeed = 1;
     }
 
     @Override
     public void loop()
     {
-    drive.setleft(gamepad1.left_stick_y);
-    drive.setright(gamepad1.right_stick_y);
+        drive.setleft(gamepad1.left_stick_y / scaleSpeed);
+        drive.setright(gamepad1.right_stick_y);
+        if (gamepad1.a) {
+            scaleSpeed =  2;
+        }
+        else {
+            scaleSpeed = 1;
+        }
     }
 
 }
