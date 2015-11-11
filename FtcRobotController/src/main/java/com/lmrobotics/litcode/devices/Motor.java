@@ -66,7 +66,7 @@ public class Motor
      * Get the current power level of the motor (with MAX_POWER as the maximum).
      * TODO
      */
-    public synchronized int getPower()
+    public synchronized void getPower()
     {
     }
 
