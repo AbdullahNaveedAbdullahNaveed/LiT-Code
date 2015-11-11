@@ -1,5 +1,7 @@
 package com.lmrobotics.litcode.autonomous;
 
+import java.util.concurrent.ConcurrentLinkedQueue;
+
 /**
  * Created by Bryan on 11/7/2015.
  */
@@ -10,10 +12,9 @@ public class HLQGenerator
      *                   minus the extension
      * @return the HLQ object
      */
-    public static Object makeHLQ(String configName)
+    public static ConcurrentLinkedQueue<EventBlock> makeHLQ(String configName)
     {
-        // TODO implement
-        // TODO determine return type
-        return new Object();
+        ConcurrentLinkedQueue<EventBlock> newHLQ = new ConcurrentLinkedQueue<EventBlock>();
+        return newHLQ;
     }
 }
