@@ -1,5 +1,6 @@
 package com.lmrobotics.litcode.devices;
 
+import com.lmrobotics.litcode.devices.Motor;
 /**
  * Created by adsweiger on 11/5/2015.
  */
@@ -35,4 +36,9 @@ public class DriveSystem
     {
 
     }
+    
+    public static final int GAME_PAD_MAX= 128;
+    public static final int GAME_PAD_MIN= -128;
+    public static final double MOTOR_MAX= GAME_PAD_MAX/1.28;
+    public static final double MOTOR_MIN= GAME_PAD_MIN/1.28;
 }
