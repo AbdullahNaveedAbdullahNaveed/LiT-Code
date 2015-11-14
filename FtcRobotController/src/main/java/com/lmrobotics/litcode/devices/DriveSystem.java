@@ -1,8 +1,18 @@
 package com.lmrobotics.litcode.devices;
 
+<<<<<<< HEAD
+<<<<<<< HEAD
+import com.lmrobotics.litcode.devices.Motor;
+=======
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+>>>>>>> refs/remotes/origin/master
+=======
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.HardwareMap;
+
+>>>>>>> refs/remotes/origin/master
 /**
  * Created by adsweiger on 11/5/2015.
  */
