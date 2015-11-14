@@ -1,5 +1,7 @@
 package com.lmrobotics.litcode.autonomous;
 
+import com.qualcomm.robotcore.hardware.HardwareMap;
+
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 /** EPS – Event Processing Subsystem.  Provide a base class used by classes like Navigation
@@ -12,6 +14,8 @@ public abstract class EPS
     protected ConcurrentLinkedQueue<AutonomousEvent> queue;
     /** If the EPS is waiting for a new block of events to be queued. */
     private boolean waitingForNewEvents;
+    /** The current event to run. */
+    private AutonomousEvent currentEvent;
 
     /** Normal EPS setup. */
     public EPS()
@@ -27,6 +31,7 @@ public abstract class EPS
     public abstract void oneCycle();
     /** Does any startup operations specific to a subclass. */
     public abstract void init();
+    protected abstract boolean currentEventFinished();
 
     /** Starts up the thread for this EPS and calls the subclass method for unique setup. */
     public void start()
@@ -66,6 +71,17 @@ public abstract class EPS
         queue = newQueue;
         // Restart cycling of this system
         restartSystem();
+    }
+
+    protected AutonomousEvent getCurrentEvent()
+    {
+        return currentEvent;
+    }
+
+    protected void setNextEvent()
+    {
+        // Get and set the next event
+        currentEvent = queue.poll();
     }
 
     /** Set this system is a suspended state, which continues until new events have been queued.
