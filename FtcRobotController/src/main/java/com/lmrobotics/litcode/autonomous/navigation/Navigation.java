@@ -6,15 +6,22 @@ import com.lmrobotics.litcode.devices.DriveSystem;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 /**
- * TODO document this
+ * To move the robot around on the field.  The Navigation class receives navigation events
+ * from the task controller.  The data received (contained inside an object) will include
+ * data like target coordinates/angles and max speed.  Navigation will also have to deal
+ * with reflecting coordinates and angles depending on which alliance we are on, due to how
+ * the field is symmetrical over a center line instead of rotationally symmetrical
+ * (like in previous years).
  */
 public class Navigation extends EPS
 {
     /** The drive system used to control the drive system. */
     private DriveSystem drive;
 
+    /** Basic constructor. */
     public Navigation(HardwareMap hardwareMap)
     {
+        // Initialize the drive system object
         drive = new DriveSystem(hardwareMap);
     }
 
