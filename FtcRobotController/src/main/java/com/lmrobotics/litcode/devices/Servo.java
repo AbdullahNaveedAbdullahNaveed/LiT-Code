@@ -4,6 +4,7 @@ package com.lmrobotics.litcode.devices;
  * The intent and advantages of this class are similar if not identical
  * to the Motor class (see its class definition for details).
  */
+@Deprecated
 public class Servo
 {
     /** Provide the maximum position value a servo can be set to.
