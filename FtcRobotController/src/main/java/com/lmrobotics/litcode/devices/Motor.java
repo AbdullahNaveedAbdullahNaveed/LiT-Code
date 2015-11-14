@@ -1,5 +1,7 @@
 package com.lmrobotics.litcode.devices;
 
+import com.qualcomm.robotcore.hardware.DcMotor;
+
 /**
  * Created by brsadowitz on 10/31/15.
  */
@@ -11,6 +13,9 @@ public class Motor
      * power scaling and course correction. (MAX_POWER * -1 = max power in reverse)
      */
     public static final int MAX_POWER = 100;
+    public static final int MODE_NORMAL = 20;
+    public static final int MODE_REVERSE = -20;
+    private DcMotor motor;
     /**
      * Indicate that the motor should behave normally (it�s type doesn�t matter much, but all �MODE_�
      * constants need to be the same type to be passed in to setMode)
@@ -22,9 +27,7 @@ public class Motor
      */
     public Motor(String motorName)
     {
-        public static final int MODE_NORMAL = 20;
-        public static final int MODE_REVERSE = -20;
-        setMode(MODE_NORMAL);
+        this(motorName, MODE_NORMAL);
     }
 
     /**
@@ -32,6 +35,7 @@ public class Motor
      */
     public Motor(String motorName, mode)
     {
+        // TODO: Get motor from hardware configuration
         setMode(mode);
     }
 
@@ -61,9 +65,8 @@ public class Motor
     }
     /**
      * Get the current power level of the motor (with MAX_POWER as the maximum).
-     * TODO
      */
-    public synchronized int getPower()
+    public synchronized void getPower()
     {
     }
 
