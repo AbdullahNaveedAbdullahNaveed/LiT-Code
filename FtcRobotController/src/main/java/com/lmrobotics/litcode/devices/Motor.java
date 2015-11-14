@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 /**
  * Created by brsadowitz on 10/31/15.
  */
+@Deprecated
 public class Motor
 {
     /**
