@@ -3,6 +3,7 @@ package com.lmrobotics.litcode.devices;
 /**
  * Created by brsadowitz on 10/31/15.
  */
+@Deprecated
 public class Motor
 {
     /**
