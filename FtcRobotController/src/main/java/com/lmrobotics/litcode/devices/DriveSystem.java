@@ -1,18 +1,8 @@
 package com.lmrobotics.litcode.devices;
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-import com.lmrobotics.litcode.devices.Motor;
-=======
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
->>>>>>> refs/remotes/origin/master
-=======
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.HardwareMap;
-
->>>>>>> refs/remotes/origin/master
 /**
  * Created by adsweiger on 11/5/2015.
  */
@@ -39,10 +29,12 @@ public class DriveSystem
      */
     public synchronized void setLeft(int power)
     {
+        double convertedPower = ((double)power)/100.0;
         // for each motor in leftMotors...
-        for (each motor in leftMotors)
+        for (DcMotor motor : leftMotors)
         {
             // Set the motor power to power
+            motor.setPower(convertedPower);
         }
     }
 
@@ -53,7 +45,13 @@ public class DriveSystem
 
     public synchronized void setRight(int power)
     {
-
+        double convertedPower = ((double)power)/100.0;
+       // for each motor in rightMotors...
+        for (DcMotor motor : rightMotors)
+        {
+            // Set the motor power to power
+            motor.setPower(convertedPower);
+        }
     }
 
     /**
