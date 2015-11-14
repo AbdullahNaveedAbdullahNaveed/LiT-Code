@@ -1,7 +1,13 @@
 package com.lmrobotics.litcode.devices;
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 import com.lmrobotics.litcode.devices.Motor;
+=======
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.HardwareMap;
+
+>>>>>>> refs/remotes/origin/master
 =======
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -60,9 +66,4 @@ public class DriveSystem
     {
 
     }
-    
-    public static final int GAME_PAD_MAX= 128;
-    public static final int GAME_PAD_MIN= -128;
-    public static final double MOTOR_MAX= GAME_PAD_MAX/1.28;
-    public static final double MOTOR_MIN= GAME_PAD_MIN/1.28;
 }
