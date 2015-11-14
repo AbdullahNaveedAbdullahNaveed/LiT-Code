@@ -7,7 +7,7 @@ public abstract class AutonomousEvent
     protected Type type;
 
     /** The type of this autonomous event. */
-    enum Type
+    public enum Type
     {
         NAV_MOVE,
         NAV_TURN,
