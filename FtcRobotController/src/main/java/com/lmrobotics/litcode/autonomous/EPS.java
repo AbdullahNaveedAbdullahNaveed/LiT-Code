@@ -12,6 +12,12 @@ public abstract class EPS
     protected ConcurrentLinkedQueue<AutonomousEvent> queue;
     /** If the EPS is waiting for a new block of events to be queued. */
     private boolean waitingForNewEvents;
+    /** The current event to run. */
+    private AutonomousEvent currentEvent;
+    /** Used to indicate when the current event should terminate early regardless of if
+     * it is done.
+     */
+    private boolean terminateEarly = false;
 
     /** Normal EPS setup. */
     public EPS()
@@ -24,22 +30,21 @@ public abstract class EPS
      * infinite loop in this function; this will prevent the rest of the autonomous
      * program from running.
      */
-    public abstract void oneCycle();
+    protected abstract void oneCycle();
     /** Does any startup operations specific to a subclass. */
-    public abstract void init();
+    protected abstract void init();
+    /** Check if the current event is finished. Should also do anything to "clean up"
+     * after a finished event, like stopping motors or resetting certain values.
+     */
+    protected abstract boolean currentEventFinished();
 
     /** Starts up the thread for this EPS and calls the subclass method for unique setup. */
     public void start()
     {
+        // Set the first event
+        setNextEvent();
         // Initialize the child class
         init();
-    }
-
-    /** Run one cycle of this system, using runUnlessDone() should be preferred/used instead. */
-    public void run()
-    {
-        // Run one iteration of the operations in the child class
-        oneCycle();
     }
 
     /** Runs one cycle of events for this system, unless this system specifies it is waiting
@@ -50,6 +55,28 @@ public abstract class EPS
         if (!isWaitingForNewEvents())
         {
             run();
+        }
+    }
+
+    /** Run one cycle of this system, using runUnlessDone() should be preferred/used instead. */
+    public void run()
+    {
+        // If the current event is none (our queue is empty), wait for new events
+        if (getCurrentEvent() == null)
+        {
+            waitForNewEvents();
+        }
+        // Check if the current event is finished, and move to the next one
+        else if (currentEventFinished() || terminateEarly)
+        {
+            terminateEarly = false;
+            setNextEvent();
+        }
+        // Otherwise do a cycle for the current event
+        else
+        {
+            // Run one iteration of the operations in the child class
+            oneCycle();
         }
     }
 
@@ -66,6 +93,30 @@ public abstract class EPS
         queue = newQueue;
         // Restart cycling of this system
         restartSystem();
+    }
+
+    /** Gets the current event. */
+    protected AutonomousEvent getCurrentEvent()
+    {
+        return currentEvent;
+    }
+
+    /** Gets the next event from the queue and sets it to currentEvent. Will set the
+     * current event to null if the queue is empty.
+     */
+    protected void setNextEvent()
+    {
+        // Get and set the next event
+        currentEvent = queue.poll();
+    }
+
+    /** Used to indicate when the current event should terminate early regardless of if
+     * it is done. Should be used only when absolutely necessary (like an invalid event),
+     * as this will skip any cleanup operations for the current event.
+     */
+    protected void terminateEarly()
+    {
+        terminateEarly = true;
     }
 
     /** Set this system is a suspended state, which continues until new events have been queued.
