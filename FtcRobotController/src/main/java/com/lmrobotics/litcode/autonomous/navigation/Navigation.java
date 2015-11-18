@@ -52,24 +52,24 @@ public class Navigation extends EPS
     }
 
     @Override
-    protected boolean currentEventFinished()
+    protected EventState currentEventFinished()
     {
         // x/y coordinate movement event
         if (getCurrentEvent().getType() == AutonomousEvent.Type.NAV_MOVE)
         {
             // TODO implement checking to see if event is done
-            return true;
+            return getCurrentEvent().getState();
         }
         // Angle turning on the spot
         else if (getCurrentEvent().getType() == AutonomousEvent.Type.NAV_TURN)
         {
             // TODO implement checking to see if event is done
-            return true;
+            return getCurrentEvent().getState();
         }
         // Unknown event type, return that the current event is done
         else
         {
-            return true;
+            return getCurrentEvent().getState();
         }
     }
 
