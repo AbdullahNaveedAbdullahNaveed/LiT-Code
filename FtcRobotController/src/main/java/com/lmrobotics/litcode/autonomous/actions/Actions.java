@@ -1,6 +1,7 @@
 package com.lmrobotics.litcode.autonomous.actions;
 
 import com.lmrobotics.litcode.autonomous.EPS;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 
 /**
  *To complete events other than navigating around on the field.
@@ -13,7 +14,7 @@ import com.lmrobotics.litcode.autonomous.EPS;
  */
 public class Actions extends EPS
 {
-    public Actions()
+    public Actions(HardwareMap hardwareMap)
     {
 
     }
@@ -30,5 +31,10 @@ public class Actions extends EPS
 
     }
 
-    
+    @Override
+    protected boolean currentEventFinished()
+    {
+        // TODO implement
+        return false;
+    }
 }
