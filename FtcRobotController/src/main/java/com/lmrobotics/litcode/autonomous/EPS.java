@@ -1,5 +1,7 @@
 package com.lmrobotics.litcode.autonomous;
 
+import com.qualcomm.robotcore.hardware.HardwareMap;
+
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 /** EPS – Event Processing Subsystem.  Provide a base class used by classes like Navigation
@@ -12,6 +14,8 @@ public abstract class EPS
     protected ConcurrentLinkedQueue<AutonomousEvent> queue;
     /** If the EPS is waiting for a new block of events to be queued. */
     private boolean waitingForNewEvents;
+    /** The current event to run. */
+    private AutonomousEvent currentEvent;
 
     /** Normal EPS setup. */
     public EPS()
@@ -24,22 +28,17 @@ public abstract class EPS
      * infinite loop in this function; this will prevent the rest of the autonomous
      * program from running.
      */
-    public abstract void oneCycle();
+    protected abstract void oneCycle();
     /** Does any startup operations specific to a subclass. */
-    public abstract void init();
+    protected abstract void init();
+    /** Check if the current event is finished. */
+    protected abstract boolean currentEventFinished();
 
     /** Starts up the thread for this EPS and calls the subclass method for unique setup. */
     public void start()
     {
         // Initialize the child class
         init();
-    }
-
-    /** Run one cycle of this system, using runUnlessDone() should be preferred/used instead. */
-    public void run()
-    {
-        // Run one iteration of the operations in the child class
-        oneCycle();
     }
 
     /** Runs one cycle of events for this system, unless this system specifies it is waiting
@@ -51,6 +50,13 @@ public abstract class EPS
         {
             run();
         }
+    }
+
+    /** Run one cycle of this system, using runUnlessDone() should be preferred/used instead. */
+    public void run()
+    {
+        // Run one iteration of the operations in the child class
+        oneCycle();
     }
 
     /** Checks if this EPS is waiting for new events to be added to its queue. */
@@ -66,6 +72,21 @@ public abstract class EPS
         queue = newQueue;
         // Restart cycling of this system
         restartSystem();
+    }
+
+    /** Gets the current event. */
+    protected AutonomousEvent getCurrentEvent()
+    {
+        return currentEvent;
+    }
+
+    /** Gets the next event from the queue and sets it to currentEvent. Will set the
+     * current event to null if the queue is empty.
+     */
+    protected void setNextEvent()
+    {
+        // Get and set the next event
+        currentEvent = queue.poll();
     }
 
     /** Set this system is a suspended state, which continues until new events have been queued.
