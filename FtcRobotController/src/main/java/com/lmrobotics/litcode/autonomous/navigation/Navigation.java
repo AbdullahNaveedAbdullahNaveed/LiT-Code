@@ -28,41 +28,26 @@ public class Navigation extends EPS
     @Override
     public void init()
     {
-        // Set the first event
-        setNextEvent();
     }
 
     @Override
     public void oneCycle()
     {
-        // If the current event is none (our queue is empty), wait for new events
-        if (getCurrentEvent() == null)
+        // Determine which type the current event is and run it
+        switch (getCurrentEvent().getType())
         {
-            waitForNewEvents();
-        }
-        // Check if the current event is finished, and move to the next one
-        else if (currentEventFinished())
-        {
-            setNextEvent();
-        }
-        // Otherwise do a cycle for the current event
-        else
-        {
-            switch (getCurrentEvent().getType())
-            {
-                // Normal coordinate movement event
-                case NAV_MOVE:
-                    doMove((MoveEvent)getCurrentEvent());
-                    break;
-                // Turning on the spot
-                case NAV_TURN:
-                    doTurn((TurnEvent)getCurrentEvent());
-                    break;
-                // Unused event type, move to the next queued event
-                default:
-                    setNextEvent();
-                    break;
-            }
+            // Normal coordinate movement event
+            case NAV_MOVE:
+                doMove((MoveEvent)getCurrentEvent());
+                break;
+            // Turning on the spot
+            case NAV_TURN:
+                doTurn((TurnEvent)getCurrentEvent());
+                break;
+            // Unused event type, move to the next queued event
+            default:
+                terminateEarly();
+                break;
         }
     }
 
