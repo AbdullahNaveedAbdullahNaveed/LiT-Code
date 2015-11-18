@@ -12,19 +12,19 @@ public class TeleOp extends OpMode
 
     public ArmSystem arm;
 
-    float scaleSpeed = 1;
+    float scaleSpeed = 1.0f;
 
     @Override
     public void init()
     {
-
+        drive = new DriveSystem(hardwareMap);
     }
 
     @Override
     public void loop()
     {
-        drive.setLeft((int)(gamepad1.left_stick_y / scaleSpeed));
-        drive.setRight((int)(gamepad1.right_stick_y / scaleSpeed));
+        drive.setLeft(gamepad1.left_stick_y / scaleSpeed);
+        drive.setRight(gamepad1.right_stick_y / scaleSpeed);
         if (gamepad1.a)
         {
             scaleSpeed =  2.0f;
@@ -46,5 +46,4 @@ public class TeleOp extends OpMode
 //          arm.armUp(0);
 //        }
     }
-
 }
