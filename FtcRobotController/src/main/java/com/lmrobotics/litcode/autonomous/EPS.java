@@ -1,7 +1,5 @@
 package com.lmrobotics.litcode.autonomous;
 
-import com.qualcomm.robotcore.hardware.HardwareMap;
-
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 /** EPS – Event Processing Subsystem.  Provide a base class used by classes like Navigation
@@ -16,6 +14,10 @@ public abstract class EPS
     private boolean waitingForNewEvents;
     /** The current event to run. */
     private AutonomousEvent currentEvent;
+    /** Used to indicate when the current event should terminate early regardless of if
+     * it is done.
+     */
+    private boolean terminateEarly = false;
 
     /** Normal EPS setup. */
     public EPS()
@@ -31,12 +33,16 @@ public abstract class EPS
     protected abstract void oneCycle();
     /** Does any startup operations specific to a subclass. */
     protected abstract void init();
-    /** Check if the current event is finished. */
+    /** Check if the current event is finished. Should also do anything to "clean up"
+     * after a finished event, like stopping motors or resetting certain values.
+     */
     protected abstract boolean currentEventFinished();
 
     /** Starts up the thread for this EPS and calls the subclass method for unique setup. */
     public void start()
     {
+        // Set the first event
+        setNextEvent();
         // Initialize the child class
         init();
     }
@@ -55,8 +61,23 @@ public abstract class EPS
     /** Run one cycle of this system, using runUnlessDone() should be preferred/used instead. */
     public void run()
     {
-        // Run one iteration of the operations in the child class
-        oneCycle();
+        // If the current event is none (our queue is empty), wait for new events
+        if (getCurrentEvent() == null)
+        {
+            waitForNewEvents();
+        }
+        // Check if the current event is finished, and move to the next one
+        else if (currentEventFinished() || terminateEarly)
+        {
+            terminateEarly = false;
+            setNextEvent();
+        }
+        // Otherwise do a cycle for the current event
+        else
+        {
+            // Run one iteration of the operations in the child class
+            oneCycle();
+        }
     }
 
     /** Checks if this EPS is waiting for new events to be added to its queue. */
@@ -87,6 +108,15 @@ public abstract class EPS
     {
         // Get and set the next event
         currentEvent = queue.poll();
+    }
+
+    /** Used to indicate when the current event should terminate early regardless of if
+     * it is done. Should be used only when absolutely necessary (like an invalid event),
+     * as this will skip any cleanup operations for the current event.
+     */
+    protected void terminateEarly()
+    {
+        terminateEarly = true;
     }
 
     /** Set this system is a suspended state, which continues until new events have been queued.

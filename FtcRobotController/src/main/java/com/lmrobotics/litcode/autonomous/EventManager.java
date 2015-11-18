@@ -20,8 +20,7 @@ public class EventManager
     private Actions actions;
 
     /** Normal constructor.
-     * @param configName the name of the event config to use
-     *                   in the 'eventconfigs' folder
+     * @param configName the name of the event config to use in the 'eventconfigs' folder
      */
     public EventManager(String configName, HardwareMap hardwareMap)
     {
