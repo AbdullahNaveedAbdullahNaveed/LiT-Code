@@ -47,18 +47,17 @@ public class Actions extends EPS
     }
 
     @Override
-    protected boolean currentEventFinished()
+    protected EventState currentEventFinished()
     {
         // Sample event
         if (getCurrentEvent().getType() == AutonomousEvent.Type.ACT_SAMPLE)
         {
-            // TODO implement checking to see if event is done
-            return true;
+            return(getCurrentEvent().getState);
         }
         // Unknown event type, return that the current event is done
         else
         {
-            return true;
+            return(getCurrentEvent().getState);
         }
     }
 }
