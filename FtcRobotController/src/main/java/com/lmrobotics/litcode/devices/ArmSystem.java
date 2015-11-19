@@ -1,5 +1,4 @@
 package com.lmrobotics.litcode.devices;
-import com.lmrobotics.litcode.devices.Motor;
 /**
  * Created by jastudier on 11/7/2015.
  */

@@ -31,13 +31,11 @@ public class DriveSystem
      */
     public synchronized void setLeft(int power)
     {
-        // Convert the power from a scale of -100 to 100 into -1.0 to 1.0
-        float convertedPower = (float)power/100.0f;
         // for each motor in leftMotors...
         for (DcMotor motor : leftMotors)
         {
             // Set the motor power to convertedPower
-            motor.setPower(convertedPower);
+            motor.setPower(power);
         }
     }
 
@@ -47,13 +45,11 @@ public class DriveSystem
      */
     public synchronized void setRight(int power)
     {
-        // Convert the power from a scale of -100 to 100 into -1.0 to 1.0
-        float convertedPower = (float)power/100.0f;
         // for each motor in leftMotors...
         for (DcMotor motor : rightMotors)
         {
             // Set the motor power to convertedPower
-            motor.setPower(convertedPower);
+            motor.setPower(power);
         }
     }
 
