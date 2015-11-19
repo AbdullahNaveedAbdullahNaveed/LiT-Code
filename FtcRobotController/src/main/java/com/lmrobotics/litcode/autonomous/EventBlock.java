@@ -1,9 +1,7 @@
 package com.lmrobotics.litcode.autonomous;
 
+import java.util.LinkedList;
 import java.util.concurrent.ConcurrentLinkedQueue;
-
-import com.lmrobotics.litcode.autonomous.actions.BaseActionEvent;
-import com.lmrobotics.litcode.autonomous.navigation.BaseNavigationEvent;
 
 /** Represents one block of events for the High Level Queue (HLQ) in EventManager. */
 public class EventBlock
@@ -15,17 +13,14 @@ public class EventBlock
 
     /** Normal constructor, takes a string of xml data from inside the open/close tags for
      * eventblock.
-     * @param xmlData the xml data as a String
+     * @param navData the Navigation events data
+     * @param actData the Actions events data
      */
-    public EventBlock(String xmlData)
+    public EventBlock(LinkedList<String> navData, LinkedList<String> actData)
     {
-        // TODO separate out the navigation portion of the data
-        String xmlNav = "";
-        // TODO separate out actions portion of the data
-        String xmlActions = "";
-        // Genrate the navigation event queue
-        navEvents = generateNavEvents(xmlNav);
-        actionEvents = generateActionEvents(xmlActions);
+        // Generate the navigation event queue
+        navEvents = generateNavEvents(navData);
+        actionEvents = generateActionEvents(actData);
     }
 
     /** Get the low level queue of navigation events for this event block. */
@@ -41,24 +36,24 @@ public class EventBlock
     }
 
     /** Generates the low level queue (LLQ) of navigation events for this block.
-     * @param xmlData the xml data to generate from
+     * @param navData the text data to generate from
      */
-    private ConcurrentLinkedQueue<AutonomousEvent> generateNavEvents(String xmlData)
+    private ConcurrentLinkedQueue<AutonomousEvent> generateNavEvents(LinkedList<String> navData)
     {
         ConcurrentLinkedQueue<AutonomousEvent> events =
                 new ConcurrentLinkedQueue<AutonomousEvent>();
-        // TODO generate events from xml data
+        // TODO generate events from data
         return events;
     }
 
     /** Generates the low level queue (LLQ) of action events for this block.
-     * @param xmlData the xml data to generate from
+     * @param actData the text data to generate from
      */
-    private ConcurrentLinkedQueue<AutonomousEvent> generateActionEvents(String xmlData)
+    private ConcurrentLinkedQueue<AutonomousEvent> generateActionEvents(LinkedList<String> actData)
     {
         ConcurrentLinkedQueue<AutonomousEvent> events =
                 new ConcurrentLinkedQueue<AutonomousEvent>();
-        // TODO generate events from xml data
+        // TODO generate events from data
         return events;
     }
 }
