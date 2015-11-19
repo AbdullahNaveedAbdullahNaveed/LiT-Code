@@ -28,8 +28,6 @@ public class EventManager
      */
     public EventManager(HardwareMap hardwareMap, String config, boolean rawConfigData)
     {
-        navigation = new Navigation(hardwareMap);
-        actions = new Actions(hardwareMap);
         // Create the HLQ when we were given the raw config text
         if (rawConfigData)
         {
@@ -40,6 +38,8 @@ public class EventManager
         {
             HLQ = HLQGenerator.makeHLQFromFile(config);
         }
+        navigation = new Navigation(hardwareMap, HLQGenerator.startX, HLQGenerator.startY, HLQGenerator.startHeading);
+        actions = new Actions(hardwareMap);
     }
 
     public void start()
