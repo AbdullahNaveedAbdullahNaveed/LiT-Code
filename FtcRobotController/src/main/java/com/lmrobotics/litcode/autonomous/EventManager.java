@@ -20,19 +20,28 @@ public class EventManager
     private Actions actions;
 
     /** Normal constructor.
-     * @param configName the name of the event config to use in the 'eventconfigs' folder
+     * @param hardwareMap the device mapping used to access motors, servos, sensors, etc.
+     * @param config the name of the event config file to use, or the raw config text (see
+     *               the rawConfigData parameter)
+     * @param rawConfigData true if the config parameter contains raw config text,
+     *                      false if the config parameter contains the name of an event config file
      */
-    public EventManager(String configName, HardwareMap hardwareMap)
+    public EventManager(HardwareMap hardwareMap, String config, boolean rawConfigData)
     {
-        // Setup the HLQ
-        HLQ = HLQGenerator.makeHLQ(configName);
         navigation = new Navigation(hardwareMap);
         actions = new Actions(hardwareMap);
+        // Create the HLQ when we were given the raw config text
+        if (rawConfigData)
+        {
+            HLQ = HLQGenerator.makeHLQFromString(config);
+        }
+        // Create the HLQ when we were given the name of a config file
+        else
+        {
+            HLQ = HLQGenerator.makeHLQFromFile(config);
+        }
     }
 
-    /**
-     * Loop through navigation and actions and handle switching to the next event block.
-     */
     public void start()
     {
         // starts navigation and action events
@@ -40,6 +49,9 @@ public class EventManager
         actions.start();
     }
 
+    /**
+     * Loop through navigation and actions and handle switching to the next event block.
+     */
     public void loop()
     {
         // runs navigation and action events until finished
@@ -49,6 +61,11 @@ public class EventManager
         if (navigation.isWaitingForNewEvents() && actions.isWaitingForNewEvents())
         {
             EventBlock nextEB = HLQ.poll();
+            // If we just finished the last block of events, stop running
+            if (nextEB == null)
+            {
+                return;
+            }
             actions.queueNextBlock(nextEB.getActionEvents());
             // queue the next block of events
             navigation.queueNextBlock(nextEB.getNavEvents());

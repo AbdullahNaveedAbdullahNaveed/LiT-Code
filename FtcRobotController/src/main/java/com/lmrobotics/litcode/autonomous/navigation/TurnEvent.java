@@ -15,7 +15,18 @@ public class TurnEvent extends BaseNavigationEvent
         this.heading = heading;
     }
 
-    /** Get the target heading for this event. */
+    /** Return the number of encoder units required to turn to the right heading.  This should
+     * only be used until we have a HeadingSystem setup.
+     * @return the encoder units required to turn to the right heading (negative is CCW)
+     */
+    public int calcDistanceToTurn()
+    {
+        return 500;
+    }
+
+    /** Get the target heading for this event.  Note: Until we have a HeadingSystem setup, use
+     * calcDistanceToTurn() instead of this.
+     */
     public int getHeading()
     {
         return heading;
