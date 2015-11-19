@@ -33,6 +33,8 @@ public abstract class EPS
     protected abstract void oneCycle();
     /** Does any startup operations specific to a subclass. */
     protected abstract void init();
+    /** Do any startup for a specific event. */
+    protected abstract void initEvent();
     /** Check if the current event is finished. Should also do anything to "clean up"
      * after a finished event, like stopping motors or resetting certain values.
      */

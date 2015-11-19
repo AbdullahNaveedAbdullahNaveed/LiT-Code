@@ -28,4 +28,31 @@ public class MoveEvent extends BaseNavigationEvent
     {
         return y;
     }
+
+    /** Calculate the distance in encoder units.
+     * @return the distance in units directly usable with the drive motors.
+     */
+    public int calcDistance()
+    {
+        return 1234;
+    }
+
+    /** Return the number of encoder units required to turn to the right heading.  This should
+     * only be used until we have a HeadingSystem setup.
+     * @return the encoder units required to turn to the right heading (negative is CCW)
+     */
+    public int calcDistanceToTurn()
+    {
+        return 500;
+    }
+
+    /** Calculate the direction to travel in.  Note: Until we have a HeadingSystem setup, use
+     * calcDistanceToTurn() instead.
+     * @return the heading in degrees, 0 is horizontal-right and CCW is positive
+     * (standard unit circle setup).
+     */
+    public int calcHeading()
+    {
+        return 180;
+    }
 }

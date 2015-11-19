@@ -30,6 +30,11 @@ public class Actions extends EPS
     }
 
     @Override
+    public void initEvent()
+    {
+    }
+
+    @Override
     public void oneCycle()
     {
         // Determine which type the current event is and run it
