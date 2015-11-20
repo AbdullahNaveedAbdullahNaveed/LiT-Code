@@ -38,7 +38,7 @@ public class EventManager
         {
             HLQ = HLQGenerator.makeHLQFromFile(config);
         }
-        navigation = new Navigation(hardwareMap, HLQGenerator.startX, HLQGenerator.startY, HLQGenerator.startHeading);
+//        navigation = new Navigation(hardwareMap, HLQGenerator.startX, HLQGenerator.startY, HLQGenerator.startHeading);
         actions = new Actions(hardwareMap);
     }
 
