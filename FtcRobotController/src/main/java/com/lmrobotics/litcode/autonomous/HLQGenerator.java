@@ -29,6 +29,10 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 @SuppressWarnings("SpellCheckingInspection")
 public class HLQGenerator
 {
+    public static double startX;
+    public static double startY;
+    public static double startHeading;
+
     /** Generates the HLQ object using the specified config file.
      * <br>
      * **WARNING:** This is not yet implemented, use makeHLQFromString() instead and
