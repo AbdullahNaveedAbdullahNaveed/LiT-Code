@@ -17,17 +17,27 @@ public class Navigation extends EPS
 {
     /** The drive system used to control the drive system. */
     private DriveSystem drive;
+    private PositionSystem ps;
+    private long start;
 
     /** Basic constructor. */
     public Navigation(HardwareMap hardwareMap)
     {
         // Initialize the drive system object
         drive = new DriveSystem(hardwareMap);
+        ps = new PositionSystem();
     }
 
     @Override
     public void init()
     {
+        // TODO are we going to use this?
+    }
+
+    @Override
+    public void initEvent()
+    {
+        start = System.currentTimeMillis();
     }
 
     @Override
@@ -60,23 +70,40 @@ public class Navigation extends EPS
     @Override
     protected boolean currentEventFinished()
     {
+        // Cast the current event to a base navigation event
+        BaseNavigationEvent event = (BaseNavigationEvent)getCurrentEvent();
+        long now = System.currentTimeMillis();
+        long elapsed = now - start;
+        boolean result = false;
         // x/y coordinate movement event
-        if (getCurrentEvent().getType() == AutonomousEvent.Type.NAV_MOVE)
+        if (event.getType() == AutonomousEvent.Type.NAV_MOVE)
         {
-            // TODO implement checking to see if event is done
-            return true;
+            MoveEvent e = (MoveEvent)event;
+            if( elapsed >= Math.abs(e.getTime()))
+            {
+                result = true;
+                drive.stopMotors();
+            }
         }
         // Angle turning on the spot
-        else if (getCurrentEvent().getType() == AutonomousEvent.Type.NAV_TURN)
+        else if (event.getType() == AutonomousEvent.Type.NAV_TURN)
         {
-            // TODO implement checking to see if event is done
-            return true;
+            TurnEvent e = (TurnEvent)event;
+            if( elapsed >= Math.abs(e.getTime()))
+            {
+                result = true;
+                drive.stopMotors();
+            }
         }
         // Unknown event type, return that the current event is done
         else
         {
-            return true;
+            // If return false in this case then the event will never be considered complete.
+            // False means event is not completed.
+            result = true;
+            drive.stopMotors();
         }
+        return result;
     }
 
     /** Move around on the field, meaning move from (x1,y1) to (x2,y2).  If it is very
@@ -85,12 +112,32 @@ public class Navigation extends EPS
      */
     private void doMove(MoveEvent event)
     {
-        // TODO implement moving around
+        // TODO replace code with legit implemention
+        // backwards
+        if (event.getTime() < 0)
+        {
+            drive.setPower(-1.0f, -1.0f);
+        }
+        // forwards
+        else
+        {
+            drive.setPower(1.0f, 1.0f);
+        }
     }
 
     /** Turn to a specific heading without moving forward or backward. */
     private void doTurn(TurnEvent event)
     {
-        // TODO implement turning on the spot
+        // TODO replace code with legit implemention
+        // Left
+        if (event.getTime() < 0)
+        {
+            drive.setPower(-1.0f, 1.0f);
+        }
+        // Right
+        else
+        {
+            drive.setPower(1.0f, -1.0f);
+        }
     }
 }

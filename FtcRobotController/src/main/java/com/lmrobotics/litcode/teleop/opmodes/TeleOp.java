@@ -19,7 +19,7 @@ public class TeleOp extends OpMode
     @Override
     public void init()
     {
-//        drive = new DriveSystem(this.hardwareMap);
+        drive = new DriveSystem(this.hardwareMap);
 //        arm = new ArmSystem(this.hardwareMap);
     }
 

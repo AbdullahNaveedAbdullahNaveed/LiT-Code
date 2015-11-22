@@ -13,10 +13,13 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  * - Event types, block start/stop tags, etc should be all caps<br>
  * - All event details are spearated by  commas (basically, comma-delimited formatting)<br>
  * Syntax:<br>
+ * INIT,X=12,Y=13,HEADING=135 : Inital settings for position, etc. can be placed anywhere,
+ *     but for cleanliness should be the first line/piece of the configuration.<br>
  * STARTBLOCK : Indicates the start of a new block of events <br>
  * ENDBLOCK : Indicates the end of all events for the current block (since the last STARTBLOCK)<br>
  * EVENT_TYPE,DATA1=123,DATA2=textdata : An event of type EVENT_TYPE with details DATA1 and DATA2<br>
  * Example:<br>
+ * INIT,X=12,Y=13,HEADING=135;<br>
  * STARTBLOCK;<br>
  * NAV_MOVE,X=12.0,Y=13.5,MAX_SPEED=0.5;<br>
  * NAV_TURN,ANGLE=180.0,MAX_SPEED=0.5;<br>
@@ -29,9 +32,9 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 @SuppressWarnings("SpellCheckingInspection")
 public class HLQGenerator
 {
-    public static double startX;
-    public static double startY;
-    public static double startHeading;
+    public static double startX = 0;
+    public static double startY = 0;
+    public static double startHeading = 0;
 
     /** Generates the HLQ object using the specified config file.
      * <br>
@@ -73,8 +76,12 @@ public class HLQGenerator
         LinkedList<String> actData = new LinkedList<String>();
         for (String line : lines)
         {
+            if (line.contains("INIT"))
+            {
+                // TODO parse line to get initial settings
+            }
             // Starting a new block, clear data from previous block
-            if (line.contains("STARTBLOCK"))
+            else if (line.contains("STARTBLOCK"))
             {
                 navData.clear();
                 actData.clear();

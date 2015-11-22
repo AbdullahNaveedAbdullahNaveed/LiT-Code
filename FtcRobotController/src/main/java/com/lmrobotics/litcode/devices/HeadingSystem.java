@@ -9,6 +9,8 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
  */
 public class HeadingSystem
 {
+    private static int initialHeading = 0;
+
     /** Basic constructor, needs the hardware map to setup access to the used sensors. */
     public HeadingSystem(HardwareMap hardwareMap)
     {
