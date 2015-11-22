@@ -27,7 +27,7 @@ public class DriveSystem
      * Sets the power of all drive motors on the left of the robot
      * @param power
      */
-    public synchronized void setLeft(int power)
+    public synchronized void setLeft(float power)
     {
         // for each motor in leftMotors...
         for (DcMotor motor : leftMotors)
@@ -41,7 +41,7 @@ public class DriveSystem
      * Sets the power of all right-side drive motors
      * @param power
      */
-    public synchronized void setRight(int power)
+    public synchronized void setRight(float power)
     {
         // for each motor in leftMotors...
         for (DcMotor motor : rightMotors)
@@ -56,9 +56,17 @@ public class DriveSystem
      * @param leftPower
      * @param rightPower
      */
-    public synchronized void setPower(int leftPower, int rightPower)
+    public synchronized void setPower(float leftPower, float rightPower)
     {
         setLeft(leftPower);
         setRight(rightPower);
+    }
+
+    /**
+     * TODO document
+     */
+    public synchronized void stopMotors()
+    {
+        setPower(0,0);
     }
 }

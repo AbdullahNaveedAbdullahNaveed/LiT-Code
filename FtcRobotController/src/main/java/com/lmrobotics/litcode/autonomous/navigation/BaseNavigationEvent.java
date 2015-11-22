@@ -6,18 +6,30 @@ import com.lmrobotics.litcode.autonomous.AutonomousEvent;
 public class BaseNavigationEvent extends AutonomousEvent
 {
     /** The max drive motor power. */
-    private int maxPower = 100;
+    private float maxPower = 100;
+    private long time;
 
     /** Basic constructor. */
-    public BaseNavigationEvent(Type type, int maxPower)
+    public BaseNavigationEvent(Type type, float maxPower)
     {
         super(type);
         this.maxPower = maxPower;
     }
 
+    public BaseNavigationEvent(Type type, float maxPower, long time)
+    {
+        this(type, maxPower);
+        this.time = time;
+    }
+
     /** Get the maximum power the drive motors should use during this event. */
-    public int getMaxPower()
+    public float getMaxPower()
     {
         return maxPower;
+    }
+
+    public long getTime()
+    {
+        return time;
     }
 }

@@ -68,15 +68,17 @@ public abstract class EPS
         {
             waitForNewEvents();
         }
-        // Check if the current event is finished, and move to the next one
-        else if (currentEventFinished() || terminateEarly)
-        {
-            terminateEarly = false;
-            setNextEvent();
-        }
         // Otherwise do a cycle for the current event
         else
         {
+            // Check if the current event is finished, and move to the next one
+            if (currentEventFinished() || terminateEarly)
+            {
+                // Set the next event
+                setNextEvent();
+                // initialize the new event
+                initEvent();
+            }
             // Run one iteration of the operations in the child class
             oneCycle();
         }
@@ -108,6 +110,7 @@ public abstract class EPS
      */
     protected void setNextEvent()
     {
+        terminateEarly = false;
         // Get and set the next event
         currentEvent = queue.poll();
     }

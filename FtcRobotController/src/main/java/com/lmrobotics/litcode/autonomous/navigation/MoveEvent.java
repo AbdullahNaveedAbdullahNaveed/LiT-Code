@@ -9,12 +9,17 @@ public class MoveEvent extends BaseNavigationEvent
     private int y = 0;
 
     /** Basic constructor. */
-    public MoveEvent(int x, int y, int maxSpeed)
+    public MoveEvent(int x, int y, float maxSpeed)
     {
         super(Type.NAV_MOVE, maxSpeed);
         // Set event attributes
         this.x = x;
         this.y = y;
+    }
+
+    public MoveEvent(long time, float maxSpeed)
+    {
+        super(Type.NAV_MOVE, maxSpeed, time);
     }
 
     /** Get the target x coordinate of this event. */

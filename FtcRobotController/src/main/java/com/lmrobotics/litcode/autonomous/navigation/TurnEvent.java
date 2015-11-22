@@ -9,10 +9,15 @@ public class TurnEvent extends BaseNavigationEvent
     private int heading = 0;
 
     /** Basic constructor. */
-    public TurnEvent(int heading, int maxSpeed)
+    public TurnEvent(int heading, float maxSpeed)
     {
         super(Type.NAV_TURN, maxSpeed);
         this.heading = heading;
+    }
+
+    public TurnEvent(float maxSpeed, long time)
+    {
+        super(Type.NAV_TURN, maxSpeed, time);
     }
 
     /** Return the number of encoder units required to turn to the right heading.  This should
