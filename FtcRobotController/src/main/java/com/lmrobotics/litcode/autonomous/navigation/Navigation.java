@@ -1,9 +1,13 @@
 package com.lmrobotics.litcode.autonomous.navigation;
 
+import com.qualcomm.robotcore.hardware.HardwareMap;
+
 import com.lmrobotics.litcode.autonomous.AutonomousEvent;
 import com.lmrobotics.litcode.autonomous.EPS;
+import com.lmrobotics.litcode.autonomous.navigation.events.BaseNavigationEvent;
+import com.lmrobotics.litcode.autonomous.navigation.events.MoveEvent;
+import com.lmrobotics.litcode.autonomous.navigation.events.TurnEvent;
 import com.lmrobotics.litcode.devices.DriveSystem;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 
 /**
  * To move the robot around on the field.  The Navigation class receives navigation events
@@ -41,12 +45,6 @@ public class Navigation extends EPS
     }
 
     @Override
-    public void initEvent()
-    {
-
-    }
-
-    @Override
     public void oneCycle()
     {
         // Determine which type the current event is and run it
@@ -54,11 +52,11 @@ public class Navigation extends EPS
         {
             // Normal coordinate movement event
             case NAV_MOVE:
-                doMove((MoveEvent)getCurrentEvent());
+                doMove((MoveEvent) getCurrentEvent());
                 break;
             // Turning on the spot
             case NAV_TURN:
-                doTurn((TurnEvent)getCurrentEvent());
+                doTurn((TurnEvent) getCurrentEvent());
                 break;
             // Unused event type, move to the next queued event
             default:
@@ -112,32 +110,48 @@ public class Navigation extends EPS
      */
     private void doMove(MoveEvent event)
     {
-        // TODO replace code with legit implemention
-        // backwards
-        if (event.getTime() < 0)
+        // Time-based movement
+        if (event.isUsingTime())
         {
-            drive.setPower(-1.0f, -1.0f);
+            // backwards
+            if (event.getTime() < 0)
+            {
+                drive.setPower(-1.0f, -1.0f);
+            }
+            // forwards
+            else
+            {
+                drive.setPower(1.0f, 1.0f);
+            }
         }
-        // forwards
+        // Coordinate-based movement
         else
         {
-            drive.setPower(1.0f, 1.0f);
+            // TODO replace code with coordinate-based implementation
         }
     }
 
     /** Turn to a specific heading without moving forward or backward. */
     private void doTurn(TurnEvent event)
     {
-        // TODO replace code with legit implemention
-        // Left
-        if (event.getTime() < 0)
+        // Time-based turning
+        if (event.isUsingTime())
         {
-            drive.setPower(-1.0f, 1.0f);
+            // Left
+            if (event.getTime() < 0)
+            {
+                drive.setPower(-1.0f, 1.0f);
+            }
+            // Right
+            else
+            {
+                drive.setPower(1.0f, -1.0f);
+            }
         }
-        // Right
+        // Coordinate-based turning
         else
         {
-            drive.setPower(1.0f, -1.0f);
+            // TODO replace code with heading-based implementation
         }
     }
 }

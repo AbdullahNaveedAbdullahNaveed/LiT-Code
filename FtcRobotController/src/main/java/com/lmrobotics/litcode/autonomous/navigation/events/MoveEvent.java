@@ -1,15 +1,15 @@
-package com.lmrobotics.litcode.autonomous.navigation;
+package com.lmrobotics.litcode.autonomous.navigation.events;
 
 /** A basic navigation event to move from one point to another. */
 public class MoveEvent extends BaseNavigationEvent
 {
     /** The x coordinate. */
-    private int x = 0;
+    private double x = 0;
     /** The y coordinate. */
-    private int y = 0;
+    private double y = 0;
 
     /** Basic constructor. */
-    public MoveEvent(int x, int y, float maxSpeed)
+    public MoveEvent(double x, double y, double maxSpeed)
     {
         super(Type.NAV_MOVE, maxSpeed);
         // Set event attributes
@@ -17,19 +17,19 @@ public class MoveEvent extends BaseNavigationEvent
         this.y = y;
     }
 
-    public MoveEvent(long time, float maxSpeed)
+    public MoveEvent(long time, double maxSpeed)
     {
         super(Type.NAV_MOVE, maxSpeed, time);
     }
 
     /** Get the target x coordinate of this event. */
-    public int getX()
+    public double getX()
     {
         return x;
     }
 
     /** Get the target y coordinate of this event. */
-    public int getY()
+    public double getY()
     {
         return y;
     }

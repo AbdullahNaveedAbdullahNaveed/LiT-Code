@@ -1,4 +1,4 @@
-package com.lmrobotics.litcode.autonomous.actions;
+package com.lmrobotics.litcode.autonomous.actions.events;
 
 import com.lmrobotics.litcode.autonomous.AutonomousEvent;
 import com.lmrobotics.litcode.autonomous.AutonomousEvent.*;
