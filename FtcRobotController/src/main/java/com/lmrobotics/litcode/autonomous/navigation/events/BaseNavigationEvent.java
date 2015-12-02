@@ -12,16 +12,15 @@ public class BaseNavigationEvent extends AutonomousEvent
     private boolean usingTime = false;
 
     /** Basic constructor. */
-    public BaseNavigationEvent(Type type, double maxPower)
+    public BaseNavigationEvent(double maxPower)
     {
-        super(type);
         this.maxPower = maxPower;
     }
 
     /** Timing-based event constructor. */
-    public BaseNavigationEvent(Type type, double maxPower, long time)
+    public BaseNavigationEvent(double maxPower, long time)
     {
-        this(type, maxPower);
+        this(maxPower);
         this.time = time;
         usingTime = true;
     }
@@ -37,6 +36,7 @@ public class BaseNavigationEvent extends AutonomousEvent
         return maxPower;
     }
 
+    /** Used with timing-based navigation to get the length to move/turn/etc. */
     public long getTime()
     {
         return time;

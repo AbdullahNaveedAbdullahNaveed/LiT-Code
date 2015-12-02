@@ -11,7 +11,7 @@ public class MoveEvent extends BaseNavigationEvent
     /** Basic constructor. */
     public MoveEvent(double x, double y, double maxSpeed)
     {
-        super(Type.NAV_MOVE, maxSpeed);
+        super(maxSpeed);
         // Set event attributes
         this.x = x;
         this.y = y;
@@ -19,7 +19,7 @@ public class MoveEvent extends BaseNavigationEvent
 
     public MoveEvent(long time, double maxSpeed)
     {
-        super(Type.NAV_MOVE, maxSpeed, time);
+        super(maxSpeed, time);
     }
 
     /** Get the target x coordinate of this event. */
@@ -39,7 +39,8 @@ public class MoveEvent extends BaseNavigationEvent
      */
     public int calcDistance()
     {
-        return 1234;
+        // TODO implement calculations
+        return 1000;
     }
 
     /** Return the number of encoder units required to turn to the right heading.  This should
@@ -48,7 +49,15 @@ public class MoveEvent extends BaseNavigationEvent
      */
     public int calcDistanceToTurn()
     {
-        return 500;
+        if (isUsingTime())
+        {
+            return 0;
+        }
+        else
+        {
+            // TODO implement calculations
+            return 0;
+        }
     }
 
     /** Calculate the direction to travel in.  Note: Until we have a HeadingSystem setup, use
@@ -58,6 +67,7 @@ public class MoveEvent extends BaseNavigationEvent
      */
     public int calcHeading()
     {
+        // TODO implement
         return 180;
     }
 }

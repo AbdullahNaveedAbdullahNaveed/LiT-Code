@@ -11,13 +11,14 @@ public class TurnEvent extends BaseNavigationEvent
     /** Basic constructor. */
     public TurnEvent(int heading, double maxSpeed)
     {
-        super(Type.NAV_TURN, maxSpeed);
+        super(maxSpeed);
         this.heading = heading;
     }
 
+    /** Time-based turning constructor. */
     public TurnEvent(double maxSpeed, long time)
     {
-        super(Type.NAV_TURN, maxSpeed, time);
+        super(maxSpeed, time);
     }
 
     /** Return the number of encoder units required to turn to the right heading.  This should

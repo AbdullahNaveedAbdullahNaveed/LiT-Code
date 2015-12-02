@@ -2,7 +2,6 @@ package com.lmrobotics.litcode.autonomous.actions;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import com.lmrobotics.litcode.autonomous.AutonomousEvent;
 import com.lmrobotics.litcode.autonomous.EPS;
 
 /**
@@ -21,7 +20,6 @@ public class Actions extends EPS
      */
     public Actions(HardwareMap hardwareMap)
     {
-
     }
 
     @Override
@@ -37,33 +35,30 @@ public class Actions extends EPS
     @Override
     public void oneCycle()
     {
-        // Determine which type the current event is and run it
-        switch (getCurrentEvent().getType())
-        {
-            // Sample event
-            case ACT_SAMPLE:
-                // doSample((???)getCurrentEvent());
-                break;
-            // Unused event type, move to the next queued event
-            default:
-                terminateEarly();
-                break;
-        }
+//        // Sample event
+//        if (getCurrentEvent().getClass() == SampleActionEvent.class)
+//        {
+//             doSample((SampleActionEvent) getCurrentEvent());
+//        }
+//        // Unused event type, move to the next queued event
+//        else
+//        {
+            terminateEarly();
+//        }
     }
 
     @Override
     protected boolean currentEventFinished()
     {
-        // Sample event
-        if (getCurrentEvent().getType() == AutonomousEvent.Type.ACT_SAMPLE)
-        {
-            // TODO implement checking to see if event is done
+//        // Sample event
+//        if (getCurrentEvent().getClass() == SampleActionEvent.class)
+//        {
+//            return true;
+//        }
+//        // Unknown event type, return that the current event is done
+//        else
+//        {
             return true;
-        }
-        // Unknown event type, return that the current event is done
-        else
-        {
-            return true;
-        }
+//        }
     }
 }

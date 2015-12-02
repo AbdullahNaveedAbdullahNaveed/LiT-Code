@@ -4,10 +4,15 @@ import java.util.LinkedList;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import com.lmrobotics.litcode.autonomous.navigation.events.*;
+import com.lmrobotics.litcode.autonomous.HLQGenerator;
 
 /** Represents one block of events for the High Level Queue (HLQ) in EventManager. */
 public class EventBlock
 {
+    /** Used during event setup to indicate no valid coordinate was found. */
+    private static final double INVALID_COORDINATE = -1000000000.0;
+    /** Used during event setup to indicate no valid angle was found. */
+    private static final int INVALID_ANGLE = (int) INVALID_COORDINATE;
     /** The navigation events for this block. */
     private ConcurrentLinkedQueue<AutonomousEvent> navEvents;
     /** The action events for this block. */
@@ -18,10 +23,11 @@ public class EventBlock
      * @param navData the Navigation events data
      * @param actData the Actions events data
      */
-    public EventBlock(LinkedList<String> navData, LinkedList<String> actData)
+    public EventBlock(LinkedList<String[]> navData, LinkedList<String[]> actData)
     {
         // Generate the navigation event queue
         navEvents = generateNavEvents(navData);
+        // Generate the actions event queue
         actionEvents = generateActionEvents(actData);
     }
 
@@ -40,101 +46,17 @@ public class EventBlock
     /** Generates the low level queue (LLQ) of navigation events for this block.
      * @param navData the text data to generate from
      */
-    private ConcurrentLinkedQueue<AutonomousEvent> generateNavEvents(LinkedList<String> navData)
+    private ConcurrentLinkedQueue<AutonomousEvent> generateNavEvents(LinkedList<String[]> navData)
     {
         ConcurrentLinkedQueue<AutonomousEvent> events =
                 new ConcurrentLinkedQueue<AutonomousEvent>();
         // Parse each event section
-        for (String line : navData)
+        for (String[] eventData : navData)
         {
-            // Split the data at commas
-            String[] data = line.split(",");
-            // Get the max speed value
-            double maxSpeed = 1.0;
-            try
+            AutonomousEvent event = generateNavEvent(eventData);
+            if (event != null)
             {
-                maxSpeed = Double.parseDouble(findKeyValue(data, "MAX_SPEED", "1.0"));
-            }
-            catch (NumberFormatException e)
-            {
-                maxSpeed = 1.0;
-            }
-            // Navigation move event data
-            if (line.contains("NAV_MOVE"))
-            {
-                // Timing-based movement
-                if (line.contains("TIME"))
-                {
-                    long time = 0;
-                    try
-                    {
-                        time = Long.parseLong(findKeyValue(data, "TIME", "0"));
-                    }
-                    catch (NumberFormatException e)
-                    {
-                        // TODO display warning for invalid time parameter
-                        time = 0;
-                    }
-                    // Queue the event
-                    events.add(new MoveEvent(time, maxSpeed));
-                }
-                // Coordinate-based movement
-                else
-                {
-                    try
-                    {
-                        // TODO make this try to parse as integer if parseDouble fails
-                        double x = Double.parseDouble(findKeyValue(data, "X"));
-                        double y = Double.parseDouble(findKeyValue(data, "Y"));
-                        // Queue the event
-                        events.add(new MoveEvent(x, y, maxSpeed));
-                    }
-                    // An x or y value could not be found
-                    catch (NullPointerException e)
-                    {
-                        // TODO display warning for invalid parameter
-                    }
-                    // The x or y coordinate text was not entered correctly
-                    catch (NumberFormatException e)
-                    {
-                        // TODO display warning for invalid parameter
-                    }
-                }
-            }
-            // Navigation turn event data
-            else if (line.contains("NAV_TURN"))
-            {
-                // Timing-based turn
-                if (line.contains("TIME"))
-                {
-                    long time = 0;
-                    try
-                    {
-                        time = Long.parseLong(findKeyValue(data, "TIME", "0"));
-                    }
-                    catch (NumberFormatException e)
-                    {
-                        // TODO display warning for invalid time parameter
-                        time = 0;
-                    }
-                    events.add(new TurnEvent(maxSpeed, time));
-                }
-                else
-                {
-                    try
-                    {
-                        int heading = Integer.parseInt(findKeyValue(data, "HEADING"));
-                        events.add(new TurnEvent(heading, maxSpeed));
-                    }
-                    catch (NullPointerException e)
-                    {
-                        // TODO display warning for invalid parameter
-                    }
-                    catch (NumberFormatException e)
-                    {
-                        // TODO display warning for invalid parameter
-                    }
-                }
+                events.add(event);
             }
         }
         return events;
@@ -143,39 +65,190 @@ public class EventBlock
     /** Generates the low level queue (LLQ) of action events for this block.
      * @param actData the text data to generate from
      */
-    private ConcurrentLinkedQueue<AutonomousEvent> generateActionEvents(LinkedList<String> actData)
+    private ConcurrentLinkedQueue<AutonomousEvent> generateActionEvents(LinkedList<String[]> actData)
     {
         ConcurrentLinkedQueue<AutonomousEvent> events =
                 new ConcurrentLinkedQueue<AutonomousEvent>();
-        for (String line : actData)
+        for (String[] eventData : actData)
         {
-            if (line.contains("ACT_SAMPLE"))
+            AutonomousEvent event = generateActionEvent(eventData);
+            if (event != null)
             {
-                // Do nothing for now
+                events.add(event);
             }
         }
         return events;
     }
 
-    /** Find the value for a key=value pair, returns null if value could not be found. */
-    private String findKeyValue(String[] pieces, String key)
+    private AutonomousEvent generateNavEvent(String[] keys)
     {
-        return findKeyValue(pieces, key, null);
+        double maxSpeed = 1.0;
+        // Get the max speed value, leave as default if not specified
+        if (HLQGenerator.containsKey(keys, "MAX_SPEED"))
+        {
+            maxSpeed = toDouble(HLQGenerator.findKeyValue(keys, "MAX_SPEED", "1.0"), 1.0);
+        }
+        // Check if the event uses timing or coordinates/angles
+        boolean isTimeBased = HLQGenerator.containsKey(keys, "TIME");
+        // Get the event type
+        String eventType = HLQGenerator.findKeyValue(keys, "EVENT");
+        // Movement event data
+        if (eventType == MoveEvent.class.getSimpleName())
+        {
+            // Create a move event using time
+            if (isTimeBased)
+            {
+                long time;
+                // Try to get the time value
+                time = toInteger(HLQGenerator.findKeyValue(keys, "TIME", "0"));
+                // Invalid or zero time entered
+                if (time == 0)
+                {
+                    // TODO indicate invalid time to user
+                    return null;
+                }
+                // Create and return the new event
+                else
+                {
+                    return new MoveEvent(time, maxSpeed);
+                }
+            }
+            // Create a move event using coordinates
+            else
+            {
+                double x;
+                double y;
+                // Try to get the coordinates
+                x = toDouble(HLQGenerator.findKeyValue(keys, "X", "ERROR"), INVALID_COORDINATE);
+                y = toDouble(HLQGenerator.findKeyValue(keys, "Y", "ERROR"), INVALID_COORDINATE);
+                // Invalid number entered for x
+                if (x == INVALID_COORDINATE)
+                {
+                    // TODO indicate invalid x value to user
+                    return null;
+                }
+                // Invalid number entered for y
+                else if (y == INVALID_COORDINATE)
+                {
+                    // TODO indicate invalid y value to user
+                    return null;
+                }
+                // Create and return the new event
+                else
+                {
+                    return new MoveEvent(x, y, maxSpeed);
+                }
+            }
+        }
+        // Turn event data
+        else if (eventType == TurnEvent.class.getSimpleName())
+        {
+            // Create a turn event using time
+            if (isTimeBased)
+            {
+                long time;
+                // Try to get the time value
+                time = toInteger(HLQGenerator.findKeyValue(keys, "TIME", "0"));
+                // Invalid or zero time entered
+                if (time == 0)
+                {
+                    // TODO indicate invalid time to user
+                    return null;
+                }
+                // Create and return the new event
+                else
+                {
+                    return new TurnEvent(maxSpeed, time);
+                }
+            }
+            // Create a turn event using angle/heading
+            else
+            {
+                int angle;
+                // Try to get the coordinates
+                angle = toInteger(HLQGenerator.findKeyValue(keys, "ANGLE", "ERROR"), INVALID_ANGLE);
+                // Invalid angle entered
+                if (angle == INVALID_ANGLE)
+                {
+                    // TODO indicate invalid angle value to user
+                    return null;
+                }
+                // Create and return the new event
+                else
+                {
+                    return new TurnEvent(angle, maxSpeed);
+                }
+            }
+        }
+        // Unknown navigation event type, return null
+        else
+        {
+            return null;
+        }
     }
 
-    /** Find the value for a key=value pair, takes an argument for a default value if the
-     * value could not be found.
-     * @param pieces the list of pieces containing at lease 1 key=value pair
-     * @param key the identifier to look for
-     * @param defaultValue returned if the value of the key could not be found
-     * @return the value part of a key=value pair, or defaultValue if key=value is not found
+    /** Creates and returns an action event class from the specified key data.
+     * @param keys the list of key and key/value pairs to generate the event
+     * @return an action event object created from the keys data
      */
-    private String findKeyValue(String[] pieces, String key, String defaultValue)
+    private AutonomousEvent generateActionEvent(String[] keys)
     {
-        String value = defaultValue;
-        for (String piece : pieces)
+        // TODO implement
+        return null;
+    }
+
+    /** Parse and return an integer from the specified string.
+     * @param fromString the string to try to parse an integer from
+     * @return an integer parsed from the string
+     * @throws NumberFormatException when the string is not a valid integer
+     */
+    private int toInteger(String fromString) throws NumberFormatException
+    {
+        return Integer.parseInt(fromString);
+    }
+
+    /** Parse and return an integer from the specified string.
+     * @param fromString the string to try to parse an integer from
+     * @param defaultValue the default value to return if the string could not be parsed
+     * @return an integer parsed from fromString or defaultValue as appropriate
+     */
+    private int toInteger(String fromString, int defaultValue)
+    {
+        try
         {
-            // TODO implement
+            return toInteger(fromString);
+        }
+        catch (NumberFormatException e)
+        {
+            return defaultValue;
+        }
+    }
+
+    /** Fairly safe way to parse a string to get a double value.
+     * @param fromString the string to parse
+     * @param defaultValue the value to return if the string could not be parsed as a number
+     * @return fromString parsed as a double, or defaultValue if fromString isn't a number
+     */
+    private double toDouble(String fromString, double defaultValue)
+    {
+        double value;
+        try
+        {
+            // If value contains a decimal, try to parse it as a double
+            if (fromString.contains("."))
+            {
+                value = Double.parseDouble(fromString);
+            }
+            // Doesn't contain a decimal, try to parse it as an integer
+            else
+            {
+                value = (double) toInteger(fromString);
+            }
+        }
+        // Invalid number, return the specified default value
+        catch (NumberFormatException e)
+        {
+            return defaultValue;
         }
         return value;
     }
