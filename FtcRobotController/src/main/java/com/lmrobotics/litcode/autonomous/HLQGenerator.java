@@ -17,16 +17,16 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  *     but for cleanliness should be the first line/piece of the configuration.<br>
  * STARTBLOCK : Indicates the start of a new block of events <br>
  * ENDBLOCK : Indicates the end of all events for the current block (since the last STARTBLOCK)<br>
- * EVENT_TYPE,DATA1=123,DATA2=textdata : An event of type EVENT_TYPE with details DATA1 and DATA2<br>
+ * [NAVIGATION or ACTION],EVENT=[Event class name],DATA1=123,DATA2=textdata : An event of type EVENT_TYPE with details DATA1 and DATA2<br>
  * Example:<br>
  * INIT,X=12,Y=13,HEADING=135;<br>
  * STARTBLOCK;<br>
- * NAV_MOVE,X=12.0,Y=13.5,MAX_SPEED=0.5;<br>
- * NAV_TURN,ANGLE=180.0,MAX_SPEED=0.5;<br>
- * ACT_MOVE_SERVO,POS=123;<br>
+ * NAVIGATION,EVENT=MoveEvent,X=12.0,Y=13.5,MAX_SPEED=0.5;<br>
+ * NAVIGATION,EVENT=TurnEvent,ANGLE=180.0,MAX_SPEED=0.5;<br>
+ * ACTION,EVENT=SampleActionEvent;<br>
  * ENDBLOCK;<br>
  * STARTBLOCK;<br>
- * ACT_SCORE_CLIMBERS;<br>
+ * NAVIGATION,EVENT=MoveEvent,TIME=-100;<br>
  * ENDBLOCK;<br>
  */
 @SuppressWarnings("SpellCheckingInspection")
@@ -68,50 +68,106 @@ public class HLQGenerator
     private static ConcurrentLinkedQueue<EventBlock> buildHLQ(String rawData)
     {
         ConcurrentLinkedQueue<EventBlock> newHLQ = new ConcurrentLinkedQueue<EventBlock>();
-        // Separate data by semicolon
-        String[] lines = rawData.split(";");
+        // Remove certain whitespace characters then separate data by semicolon
+        String[] lines = rawData.replaceAll("[ \n\r\t\b\f]", "").split(";");
         // The lines containing navigation event data for current block
-        LinkedList<String> navData = new LinkedList<String>();
+        LinkedList<String[]> navData = new LinkedList<String[]>();
         // Line containing actions event data for the current block
-        LinkedList<String> actData = new LinkedList<String>();
+        LinkedList<String[]> actData = new LinkedList<String[]>();
         for (String line : lines)
         {
-            if (line.contains("INIT"))
+            String[] keys = line.split(",");
+            if (containsKey(keys, "INIT"))
             {
                 // TODO parse line to get initial settings
             }
             // Starting a new block, clear data from previous block
-            else if (line.contains("STARTBLOCK"))
+            else if (containsKey(keys, "STARTBLOCK"))
             {
                 navData.clear();
                 actData.clear();
             }
             // Ending current block, generate the actual EventBlock object and add it to the queue
-            else if (line.contains("ENDBLOCK"))
+            else if (containsKey(keys, "ENDBLOCK"))
             {
                 newHLQ.add(new EventBlock(navData, actData));
             }
-            // Otherwise add the event (if any) on that line to the data for the current queue
+            // Navigation event, add it to the list of nav. event data
+            else if (containsKey(keys, "NAVIGATION"))
+            {
+                navData.add(keys);
+            }
+            // Action event, add it to the list of action event data
+            else if (containsKey(keys, "ACTION"))
+            {
+                actData.add(keys);
+            }
+            // Unknown line of config data
             else
             {
-                // Check for navigation events
-                for (String type : AutonomousEvent.getNavEventTypes())
-                {
-                    if(line.contains(type))
-                    {
-                        navData.add(line);
-                    }
-                }
-                // Check for action events
-                for (String type : AutonomousEvent.getActEventTypes())
-                {
-                    if (line.contains(type))
-                    {
-                        actData.add(line);
-                    }
-                }
+                // TODO Indicate invalid line of data to user
             }
         }
         return newHLQ;
+    }
+
+    /** Check if the given list of keys and key:value pairs contains the specified key.
+     * @param keys the list of keys and key:value pairs
+     * @param key the key to look for
+     * @return true if the key is in keys, false if it is not
+     */
+    public static boolean containsKey(String[] keys, String key)
+    {
+        // Search for the key
+        for (String piece : keys)
+        {
+            String currKey;
+            // A key:value pair
+            if (piece.contains("="))
+            {
+                currKey = piece.split("=")[0];
+            }
+            // A key with no value
+            else
+            {
+                currKey = piece;
+            }
+            // Remove whitespace characters that may have been in the key:value pair
+            currKey = currKey.replace(" ", "");
+            // Check if this key value is the key we are checking for
+            if (currKey == key)
+            {
+                return true;
+            }
+        }
+        // Key not found
+        return false;
+    }
+
+    /** Find the value for a key=value pair, returns null if value could not be found.
+     * @param keys the list of keys and key:value pairs
+     * @param key the key to get a value from
+     * @return the value associated with the key
+     */
+    public static String findKeyValue(String[] keys, String key)
+    {
+        return findKeyValue(keys, key, null);
+    }
+
+    /** Find the value for a key=value pair, takes an argument for a default value if the
+     * value could not be found.
+     * @param pieces the list of pieces containing at lease 1 key=value pair
+     * @param key the identifier to look for
+     * @param defaultValue returned if the value of the key could not be found
+     * @return the value part of a key=value pair, or defaultValue if key=value is not found
+     */
+    public static String findKeyValue(String[] pieces, String key, String defaultValue)
+    {
+        String value = defaultValue;
+        for (String piece : pieces)
+        {
+            // TODO implement
+        }
+        return value;
     }
 }

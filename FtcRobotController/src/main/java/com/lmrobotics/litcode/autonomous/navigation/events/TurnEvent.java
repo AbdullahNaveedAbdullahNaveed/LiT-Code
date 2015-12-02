@@ -1,4 +1,4 @@
-package com.lmrobotics.litcode.autonomous.navigation;
+package com.lmrobotics.litcode.autonomous.navigation.events;
 
 /** A basic navigation event to turn to a certain heading. */
 public class TurnEvent extends BaseNavigationEvent
@@ -9,15 +9,16 @@ public class TurnEvent extends BaseNavigationEvent
     private int heading = 0;
 
     /** Basic constructor. */
-    public TurnEvent(int heading, float maxSpeed)
+    public TurnEvent(int heading, double maxSpeed)
     {
-        super(Type.NAV_TURN, maxSpeed);
+        super(maxSpeed);
         this.heading = heading;
     }
 
-    public TurnEvent(float maxSpeed, long time)
+    /** Time-based turning constructor. */
+    public TurnEvent(double maxSpeed, long time)
     {
-        super(Type.NAV_TURN, maxSpeed, time);
+        super(maxSpeed, time);
     }
 
     /** Return the number of encoder units required to turn to the right heading.  This should

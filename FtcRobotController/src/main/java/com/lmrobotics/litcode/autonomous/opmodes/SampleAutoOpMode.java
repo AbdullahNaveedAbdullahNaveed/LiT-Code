@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 /** A sample autonomous opmode. */
 public class SampleAutoOpMode extends OpMode
 {
-    private static final String sampleConfigData = "INIT,X=12,Y=13,HEADING=135; STARTBLOCK; NAV_MOVE,TIME=500,MAX_SPEED=0.5; ENDBLOCK;";
+    private static final String sampleConfigData = "STARTBLOCK; NAVIGATION,EVENT=MoveEvent,TIME=500,MAX_SPEED=1.0; ENDBLOCK;";
     private EventManager em;
 
     @Override

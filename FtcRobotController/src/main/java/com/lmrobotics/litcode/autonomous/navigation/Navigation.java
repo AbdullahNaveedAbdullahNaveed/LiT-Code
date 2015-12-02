@@ -1,9 +1,11 @@
 package com.lmrobotics.litcode.autonomous.navigation;
 
-import com.lmrobotics.litcode.autonomous.AutonomousEvent;
-import com.lmrobotics.litcode.autonomous.EPS;
-import com.lmrobotics.litcode.devices.DriveSystem;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+
+import com.lmrobotics.litcode.autonomous.EPS;
+import com.lmrobotics.litcode.autonomous.navigation.events.MoveEvent;
+import com.lmrobotics.litcode.autonomous.navigation.events.TurnEvent;
+import com.lmrobotics.litcode.devices.DriveSystem;
 
 /**
  * To move the robot around on the field.  The Navigation class receives navigation events
@@ -37,58 +39,52 @@ public class Navigation extends EPS
     @Override
     public void initEvent()
     {
+        // Used for time-based events
         start = System.currentTimeMillis();
-    }
-
-    @Override
-    public void initEvent()
-    {
-
     }
 
     @Override
     public void oneCycle()
     {
-        // Determine which type the current event is and run it
-        switch (getCurrentEvent().getType())
+        // Normal coordinate movement event
+        if (getCurrentEvent().getClass() == MoveEvent.class)
         {
-            // Normal coordinate movement event
-            case NAV_MOVE:
-                doMove((MoveEvent)getCurrentEvent());
-                break;
-            // Turning on the spot
-            case NAV_TURN:
-                doTurn((TurnEvent)getCurrentEvent());
-                break;
-            // Unused event type, move to the next queued event
-            default:
-                terminateEarly();
-                break;
+            doMove((MoveEvent) getCurrentEvent());
+        }
+        // Turning on the spot
+        else if (getCurrentEvent().getClass() == TurnEvent.class)
+        {
+            doTurn((TurnEvent) getCurrentEvent());
+        }
+        // Unused event type, move to the next queued event
+        else
+        {
+            terminateEarly();
         }
     }
 
     @Override
     protected boolean currentEventFinished()
     {
-        // Cast the current event to a base navigation event
-        BaseNavigationEvent event = (BaseNavigationEvent)getCurrentEvent();
         long now = System.currentTimeMillis();
         long elapsed = now - start;
         boolean result = false;
-        // x/y coordinate movement event
-        if (event.getType() == AutonomousEvent.Type.NAV_MOVE)
+        // Moving around on the field event
+        if (getCurrentEvent().getClass() == MoveEvent.class)
         {
-            MoveEvent e = (MoveEvent)event;
+            MoveEvent e = (MoveEvent) getCurrentEvent();
+            // TODO check if the event is coordinate or time based then check if done
             if( elapsed >= Math.abs(e.getTime()))
             {
                 result = true;
                 drive.stopMotors();
             }
         }
-        // Angle turning on the spot
-        else if (event.getType() == AutonomousEvent.Type.NAV_TURN)
+        // Turning on the spot
+        else if (getCurrentEvent().getClass() == TurnEvent.class)
         {
-            TurnEvent e = (TurnEvent)event;
+            TurnEvent e = (TurnEvent) getCurrentEvent();
+            // TODO check if the event is angle or time based then check if done
             if( elapsed >= Math.abs(e.getTime()))
             {
                 result = true;
@@ -112,32 +108,48 @@ public class Navigation extends EPS
      */
     private void doMove(MoveEvent event)
     {
-        // TODO replace code with legit implemention
-        // backwards
-        if (event.getTime() < 0)
+        // Time-based movement
+        if (event.isUsingTime())
         {
-            drive.setPower(-1.0f, -1.0f);
+            // backwards
+            if (event.getTime() < 0)
+            {
+                drive.setPower(-1.0f, -1.0f);
+            }
+            // forwards
+            else
+            {
+                drive.setPower(1.0f, 1.0f);
+            }
         }
-        // forwards
+        // Coordinate-based movement
         else
         {
-            drive.setPower(1.0f, 1.0f);
+            // TODO replace code with coordinate-based implementation
         }
     }
 
     /** Turn to a specific heading without moving forward or backward. */
     private void doTurn(TurnEvent event)
     {
-        // TODO replace code with legit implemention
-        // Left
-        if (event.getTime() < 0)
+        // Time-based turning
+        if (event.isUsingTime())
         {
-            drive.setPower(-1.0f, 1.0f);
+            // Left
+            if (event.getTime() < 0)
+            {
+                drive.setPower(-1.0f, 1.0f);
+            }
+            // Right
+            else
+            {
+                drive.setPower(1.0f, -1.0f);
+            }
         }
-        // Right
+        // Angle-based turning
         else
         {
-            drive.setPower(1.0f, -1.0f);
+            // TODO replace code with heading-based implementation
         }
     }
 }
