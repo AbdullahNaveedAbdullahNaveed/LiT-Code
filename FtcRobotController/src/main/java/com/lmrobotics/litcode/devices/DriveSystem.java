@@ -38,6 +38,14 @@ public class DriveSystem
     }
 
     /**
+     * @param power
+     */
+    public synchronized void setLeft(double power)
+    {
+        setLeft((float) power);
+    }
+
+    /**
      * Sets the power of all right-side drive motors
      * @param power
      */
@@ -52,6 +60,15 @@ public class DriveSystem
     }
 
     /**
+     *
+     * @param power
+     */
+    public synchronized void setRight(double power)
+    {
+        setRight((float) power);
+    }
+
+    /**
      * Sets both left and right sides
      * @param leftPower
      * @param rightPower
@@ -62,6 +79,11 @@ public class DriveSystem
         setRight(rightPower);
     }
 
+    public synchronized void setPower(double leftPower, double rightPower)
+    {
+        setLeft(leftPower);
+        setRight(rightPower);
+    }
     /**
      * TODO document
      */
