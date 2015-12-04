@@ -1,5 +1,6 @@
 package com.lmrobotics.litcode.autonomous.navigation;
 
+import com.lmrobotics.litcode.autonomous.opmodes.SampleAutoOpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import com.lmrobotics.litcode.autonomous.EPS;
@@ -28,12 +29,14 @@ public class Navigation extends EPS
         // Initialize the drive system object
         drive = new DriveSystem(hardwareMap);
         ps = new PositionSystem();
+        SampleAutoOpMode.telemetryAccess.addData("INFO", "Navigation Initialized");
     }
 
     @Override
     public void init()
     {
         // TODO are we going to use this?
+        SampleAutoOpMode.telemetryAccess.addData("INFO", "Navigation Started");
     }
 
     @Override
@@ -69,6 +72,12 @@ public class Navigation extends EPS
         long now = System.currentTimeMillis();
         long elapsed = now - start;
         boolean result = false;
+        SampleAutoOpMode.telemetryAccess.addData("Elapsed", elapsed);
+        // Queue has been emptied
+        if (getCurrentEvent() == null)
+        {
+            result = true;
+        }
         // Moving around on the field event
         if (getCurrentEvent().getClass() == MoveEvent.class)
         {

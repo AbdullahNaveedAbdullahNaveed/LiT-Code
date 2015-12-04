@@ -50,13 +50,19 @@ public class EventBlock
     {
         ConcurrentLinkedQueue<AutonomousEvent> events =
                 new ConcurrentLinkedQueue<AutonomousEvent>();
+        events.add(new MoveEvent(2000, 1.0));
         // Parse each event section
         for (String[] eventData : navData)
         {
             AutonomousEvent event = generateNavEvent(eventData);
+            // Valid event created, queue it
             if (event != null)
             {
                 events.add(event);
+            }
+            else
+            {
+                HLQGenerator.invalidEvents += 1;
             }
         }
         return events;
@@ -72,6 +78,7 @@ public class EventBlock
         for (String[] eventData : actData)
         {
             AutonomousEvent event = generateActionEvent(eventData);
+            // Valid event created, queue it
             if (event != null)
             {
                 events.add(event);

@@ -1,5 +1,7 @@
 package com.lmrobotics.litcode.autonomous;
 
+import com.lmrobotics.litcode.autonomous.opmodes.SampleAutoOpMode;
+
 import java.util.LinkedList;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -32,6 +34,8 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 @SuppressWarnings("SpellCheckingInspection")
 public class HLQGenerator
 {
+    public static int invalidLines = 0;
+    public static int invalidEvents = 0;
     public static double startX = 0;
     public static double startY = 0;
     public static double startHeading = 0;
@@ -74,6 +78,7 @@ public class HLQGenerator
         LinkedList<String[]> navData = new LinkedList<String[]>();
         // Line containing actions event data for the current block
         LinkedList<String[]> actData = new LinkedList<String[]>();
+        newHLQ.add(new EventBlock(navData, actData));
         for (String line : lines)
         {
             String[] keys = line.split(",");
@@ -90,7 +95,7 @@ public class HLQGenerator
             // Ending current block, generate the actual EventBlock object and add it to the queue
             else if (containsKey(keys, "ENDBLOCK"))
             {
-                newHLQ.add(new EventBlock(navData, actData));
+//                newHLQ.add(new EventBlock(navData, actData));
             }
             // Navigation event, add it to the list of nav. event data
             else if (containsKey(keys, "NAVIGATION"))
@@ -105,9 +110,11 @@ public class HLQGenerator
             // Unknown line of config data
             else
             {
+                invalidLines += 1;
                 // TODO Indicate invalid line of data to user
             }
         }
+//        SampleAutoOpMode.telemetryAccess.addData("INFO", "Bad -Lines:" + Integer.toString(invalidLines) + " -Events:" + Integer.toString(invalidEvents));
         return newHLQ;
     }
 
@@ -132,8 +139,6 @@ public class HLQGenerator
             {
                 currKey = piece;
             }
-            // Remove whitespace characters that may have been in the key:value pair
-            currKey = currKey.replace(" ", "");
             // Check if this key value is the key we are checking for
             if (currKey == key)
             {

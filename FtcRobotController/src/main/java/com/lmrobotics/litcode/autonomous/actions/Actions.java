@@ -1,5 +1,6 @@
 package com.lmrobotics.litcode.autonomous.actions;
 
+import com.lmrobotics.litcode.autonomous.opmodes.SampleAutoOpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import com.lmrobotics.litcode.autonomous.EPS;
@@ -20,11 +21,13 @@ public class Actions extends EPS
      */
     public Actions(HardwareMap hardwareMap)
     {
+        SampleAutoOpMode.telemetryAccess.addData("INFO", "Actions Initialized");
     }
 
     @Override
     public void init()
     {
+        SampleAutoOpMode.telemetryAccess.addData("INFO", "Actions Started");
     }
 
     @Override

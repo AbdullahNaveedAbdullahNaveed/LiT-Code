@@ -4,6 +4,8 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 import com.lmrobotics.litcode.autonomous.navigation.Navigation;
 import com.lmrobotics.litcode.autonomous.actions.Actions;
+import com.lmrobotics.litcode.autonomous.opmodes.SampleAutoOpMode;
+import com.lmrobotics.litcode.devices.DriveSystem;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 /** The event manager is the common class used by all autonomous opmodes to control the other
@@ -28,6 +30,7 @@ public class EventManager
      */
     public EventManager(HardwareMap hardwareMap, String config, boolean rawConfigData)
     {
+        SampleAutoOpMode.telemetryAccess.addData("INFO", "Initializing Event Manager...");
         // Create the HLQ when we were given the raw config text
         if (rawConfigData)
         {
@@ -40,10 +43,17 @@ public class EventManager
         }
         navigation = new Navigation(hardwareMap);
         actions = new Actions(hardwareMap);
+        SampleAutoOpMode.telemetryAccess.addData("INFO", "Event Manager Initialized");
+        SampleAutoOpMode.telemetryAccess.addData("INFO", HLQ.size());
     }
 
     public void start()
     {
+        SampleAutoOpMode.telemetryAccess.addData("INFO", "Starting...");
+        // Setup the first block
+        EventBlock nextEB = HLQ.poll();
+        navigation.queueNextBlock(nextEB.getNavEvents());
+        actions.queueNextBlock(nextEB.getActionEvents());
         // starts navigation and action events
         navigation.start();
         actions.start();
@@ -54,21 +64,23 @@ public class EventManager
      */
     public void loop()
     {
-        // runs navigation and action events until finished
-        navigation.runUnlessDone();
-        actions.runUnlessDone();
         // If both navigation and actions done...
         if (navigation.isWaitingForNewEvents() && actions.isWaitingForNewEvents())
         {
+            // Get next event block
             EventBlock nextEB = HLQ.poll();
             // If we just finished the last block of events, stop running
             if (nextEB == null)
             {
+                SampleAutoOpMode.telemetryAccess.addData("INFO", "All Events Finshed");
                 return;
             }
+            // Queue the next sets of events
             actions.queueNextBlock(nextEB.getActionEvents());
-            // queue the next block of events
             navigation.queueNextBlock(nextEB.getNavEvents());
         }
+        // runs navigation and action events unless finished
+        navigation.runUnlessDone();
+        actions.runUnlessDone();
     }
 }

@@ -1,5 +1,7 @@
 package com.lmrobotics.litcode.autonomous;
 
+import com.lmrobotics.litcode.autonomous.opmodes.SampleAutoOpMode;
+
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 /** EPS – Event Processing Subsystem.  Provide a base class used by classes like Navigation
@@ -11,7 +13,7 @@ public abstract class EPS
     /** The queue of events for an EPS. */
     protected ConcurrentLinkedQueue<AutonomousEvent> queue;
     /** If the EPS is waiting for a new block of events to be queued. */
-    private boolean waitingForNewEvents;
+    private boolean waitingForNewEvents = false;
     /** The current event to run. */
     private AutonomousEvent currentEvent;
     /** Used to indicate when the current event should terminate early regardless of if
@@ -23,7 +25,6 @@ public abstract class EPS
     public EPS()
     {
         queue = new ConcurrentLinkedQueue<AutonomousEvent>();
-        waitForNewEvents();
     }
 
     /** The code that should be executed once per cycle.  Do NOT create a long loop or
@@ -63,23 +64,25 @@ public abstract class EPS
     /** Run one cycle of this system, using runUnlessDone() should be preferred/used instead. */
     public void run()
     {
-        // If the current event is none (our queue is empty), wait for new events
-        if (getCurrentEvent() == null)
+        // Check if the current event is finished, and move to the next one
+        if (currentEventFinished() || terminateEarly)
         {
-            waitForNewEvents();
+            // Set the next event
+            setNextEvent();
+            // Queue has emptied, return
+            if (getCurrentEvent() == null)
+            {
+                waitForNewEvents();
+                return;
+            }
+            // initialize the new event
+            initEvent();
+            SampleAutoOpMode.telemetryAccess.addData("INFO", "Starting Event: " + getCurrentEvent().getClass().getSimpleName());
         }
-        // Otherwise do a cycle for the current event
+        // Run one cycle
         else
         {
-            // Check if the current event is finished, and move to the next one
-            if (currentEventFinished() || terminateEarly)
-            {
-                // Set the next event
-                setNextEvent();
-                // initialize the new event
-                initEvent();
-            }
-            // Run one iteration of the operations in the child class
+            // Child class cycling
             oneCycle();
         }
     }
@@ -95,8 +98,7 @@ public abstract class EPS
     {
         // Set the new queue
         queue = newQueue;
-        // Restart cycling of this system
-        restartSystem();
+        setNextEvent();
     }
 
     /** Gets the current event. */
@@ -111,6 +113,7 @@ public abstract class EPS
     protected void setNextEvent()
     {
         terminateEarly = false;
+        waitingForNewEvents = false;
         // Get and set the next event
         currentEvent = queue.poll();
     }
@@ -124,18 +127,13 @@ public abstract class EPS
         terminateEarly = true;
     }
 
-    /** Set this system is a suspended state, which continues until new events have been queued.
+    /** Set this system in a suspended state, which continues until new events have been queued.
      * IMPORTANT: One this method has been called, this system's oneCycle() method will NOT be
      * called again until the event manager has queued new events.
      */
-    protected void waitForNewEvents()
+    private void waitForNewEvents()
     {
+//        SampleAutoOpMode.telemetryAccess.addData("INFO", "Previous Event Finished");
         waitingForNewEvents = true;
-    }
-
-    /** Re-starts the cycling of this system after cycling was stopped by waitForNewEvents(). */
-    private void restartSystem()
-    {
-        waitingForNewEvents = false;
     }
 }
