@@ -26,9 +26,11 @@ public class TeleOp extends OpMode
     @Override
     public void loop()
     {
-        float leftDriveControl = gamepad1.left_stick_y;
-        float rightDriveControl = gamepad1.right_stick_y;
+        float leftDriveControl = gamepad1.left_stick_y / 127;
+        float rightDriveControl = gamepad1.right_stick_y / 127;
         // Left and right drive motor control
+
+
         if (Math.abs(leftDriveControl) >= deadBand)
         {
             drive.setLeft((int)(leftDriveControl / scaleSpeed));
