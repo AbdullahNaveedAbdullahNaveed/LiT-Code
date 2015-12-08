@@ -1,5 +1,6 @@
 package com.lmrobotics.litcode.autonomous;
 
+import com.lmrobotics.litcode.autonomous.navigation.events.MoveEvent;
 import com.lmrobotics.litcode.autonomous.opmodes.SampleAutoOpMode;
 
 import java.util.LinkedList;
@@ -71,14 +72,15 @@ public class HLQGenerator
      */
     private static ConcurrentLinkedQueue<EventBlock> buildHLQ(String rawData)
     {
+        com.lmrobotics.litcode.autonomous.opmodes.SampleAutoOpMode.debugHook = "HLQ Build";
         ConcurrentLinkedQueue<EventBlock> newHLQ = new ConcurrentLinkedQueue<EventBlock>();
+        newHLQ.add(new EventBlock(new LinkedList<String[]>(), new LinkedList<String[]>()));
         // Remove certain whitespace characters then separate data by semicolon
         String[] lines = rawData.replaceAll("[ \n\r\t\b\f]", "").split(";");
         // The lines containing navigation event data for current block
         LinkedList<String[]> navData = new LinkedList<String[]>();
         // Line containing actions event data for the current block
         LinkedList<String[]> actData = new LinkedList<String[]>();
-        newHLQ.add(new EventBlock(navData, actData));
         for (String line : lines)
         {
             String[] keys = line.split(",");
@@ -95,7 +97,7 @@ public class HLQGenerator
             // Ending current block, generate the actual EventBlock object and add it to the queue
             else if (containsKey(keys, "ENDBLOCK"))
             {
-//                newHLQ.add(new EventBlock(navData, actData));
+                newHLQ.add(new EventBlock(navData, actData));
             }
             // Navigation event, add it to the list of nav. event data
             else if (containsKey(keys, "NAVIGATION"))

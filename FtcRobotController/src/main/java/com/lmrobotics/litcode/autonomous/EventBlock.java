@@ -5,6 +5,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 import com.lmrobotics.litcode.autonomous.navigation.events.*;
 import com.lmrobotics.litcode.autonomous.HLQGenerator;
+import com.lmrobotics.litcode.autonomous.opmodes.SampleAutoOpMode;
 
 /** Represents one block of events for the High Level Queue (HLQ) in EventManager. */
 public class EventBlock
@@ -25,8 +26,14 @@ public class EventBlock
      */
     public EventBlock(LinkedList<String[]> navData, LinkedList<String[]> actData)
     {
+        navEvents = new ConcurrentLinkedQueue<AutonomousEvent>();
+        navEvents.add(new MoveEvent(4000, 1.0));
+        navEvents.add(new TurnEvent(1.0, -525));
+        navEvents.add(new MoveEvent(375, 1.0));
+//        navEvents = new ConcurrentLinkedQueue<AutonomousEvent>();
+//        actionEvents = new ConcurrentLinkedQueue<AutonomousEvent>();
         // Generate the navigation event queue
-        navEvents = generateNavEvents(navData);
+//        navEvents = generateNavEvents(navData);
         // Generate the actions event queue
         actionEvents = generateActionEvents(actData);
     }
@@ -50,10 +57,11 @@ public class EventBlock
     {
         ConcurrentLinkedQueue<AutonomousEvent> events =
                 new ConcurrentLinkedQueue<AutonomousEvent>();
-        events.add(new MoveEvent(2000, 1.0));
+//        events.add(new MoveEvent(2000, 1.0));
         // Parse each event section
         for (String[] eventData : navData)
         {
+            SampleAutoOpMode.telemetryAccess.addData("Keys", eventData.toString());
             AutonomousEvent event = generateNavEvent(eventData);
             // Valid event created, queue it
             if (event != null)

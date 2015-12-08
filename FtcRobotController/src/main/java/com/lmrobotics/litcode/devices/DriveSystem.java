@@ -89,6 +89,18 @@ public class DriveSystem
      */
     public synchronized void stopMotors()
     {
-        setPower(0,0);
+        setPower(0, 0);
+    }
+
+    public synchronized void setMotorsReverse()
+    {
+        for (DcMotor motor : leftMotors)
+        {
+            motor.setDirection(DcMotor.Direction.REVERSE);
+        }
+        for (DcMotor motor : rightMotors)
+        {
+            motor.setDirection(DcMotor.Direction.REVERSE);
+        }
     }
 }

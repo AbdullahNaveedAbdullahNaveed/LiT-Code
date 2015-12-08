@@ -1,5 +1,6 @@
 package com.lmrobotics.litcode.autonomous;
 
+import java.util.LinkedList;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import com.lmrobotics.litcode.autonomous.navigation.Navigation;
@@ -41,19 +42,19 @@ public class EventManager
         {
             HLQ = HLQGenerator.makeHLQFromFile(config);
         }
+        com.lmrobotics.litcode.autonomous.opmodes.SampleAutoOpMode.debugHook = "EM init EPSs";
         navigation = new Navigation(hardwareMap);
         actions = new Actions(hardwareMap);
-        SampleAutoOpMode.telemetryAccess.addData("INFO", "Event Manager Initialized");
-        SampleAutoOpMode.telemetryAccess.addData("INFO", HLQ.size());
+//        SampleAutoOpMode.telemetryAccess.addData("INFO", "Event Manager Initialized");
     }
 
     public void start()
     {
         SampleAutoOpMode.telemetryAccess.addData("INFO", "Starting...");
         // Setup the first block
-        EventBlock nextEB = HLQ.poll();
-        navigation.queueNextBlock(nextEB.getNavEvents());
-        actions.queueNextBlock(nextEB.getActionEvents());
+//        EventBlock nextEB = HLQ.poll();
+//        navigation.queueNextBlock(nextEB.getNavEvents());
+//        actions.queueNextBlock(nextEB.getActionEvents());
         // starts navigation and action events
         navigation.start();
         actions.start();
@@ -64,6 +65,7 @@ public class EventManager
      */
     public void loop()
     {
+        com.lmrobotics.litcode.autonomous.opmodes.SampleAutoOpMode.debugHook = "em loop";
         // If both navigation and actions done...
         if (navigation.isWaitingForNewEvents() && actions.isWaitingForNewEvents())
         {

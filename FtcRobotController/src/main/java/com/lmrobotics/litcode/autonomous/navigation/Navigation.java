@@ -26,8 +26,10 @@ public class Navigation extends EPS
     /** Basic constructor. */
     public Navigation(HardwareMap hardwareMap)
     {
+        com.lmrobotics.litcode.autonomous.opmodes.SampleAutoOpMode.debugHook = "Navigation Init";
         // Initialize the drive system object
         drive = new DriveSystem(hardwareMap);
+        drive.setMotorsReverse();
         ps = new PositionSystem();
         SampleAutoOpMode.telemetryAccess.addData("INFO", "Navigation Initialized");
     }
@@ -35,13 +37,14 @@ public class Navigation extends EPS
     @Override
     public void init()
     {
-        // TODO are we going to use this?
+        com.lmrobotics.litcode.autonomous.opmodes.SampleAutoOpMode.debugHook = "Nav Start";
         SampleAutoOpMode.telemetryAccess.addData("INFO", "Navigation Started");
     }
 
     @Override
     public void initEvent()
     {
+        com.lmrobotics.litcode.autonomous.opmodes.SampleAutoOpMode.debugHook = "Nav event Init";
         // Used for time-based events
         start = System.currentTimeMillis();
     }
@@ -49,6 +52,7 @@ public class Navigation extends EPS
     @Override
     public void oneCycle()
     {
+        com.lmrobotics.litcode.autonomous.opmodes.SampleAutoOpMode.debugHook = "Nav cycle";
         // Normal coordinate movement event
         if (getCurrentEvent().getClass() == MoveEvent.class)
         {
@@ -69,20 +73,25 @@ public class Navigation extends EPS
     @Override
     protected boolean currentEventFinished()
     {
+//        com.lmrobotics.litcode.autonomous.opmodes.SampleAutoOpMode.debugHook = "Nav check done";
         long now = System.currentTimeMillis();
         long elapsed = now - start;
         boolean result = false;
         SampleAutoOpMode.telemetryAccess.addData("Elapsed", elapsed);
-        // Queue has been emptied
+//        com.lmrobotics.litcode.autonomous.opmodes.SampleAutoOpMode.debugHook = "cef 1";
+        // No event set
         if (getCurrentEvent() == null)
         {
-            result = true;
+            return true;
         }
+//        com.lmrobotics.litcode.autonomous.opmodes.SampleAutoOpMode.debugHook = "cef 2";
         // Moving around on the field event
-        if (getCurrentEvent().getClass() == MoveEvent.class)
+        else if (getCurrentEvent().getClass() == MoveEvent.class)
         {
+//            com.lmrobotics.litcode.autonomous.opmodes.SampleAutoOpMode.debugHook = "cef 3";
             MoveEvent e = (MoveEvent) getCurrentEvent();
             // TODO check if the event is coordinate or time based then check if done
+//            com.lmrobotics.litcode.autonomous.opmodes.SampleAutoOpMode.debugHook = "cef 4";
             if( elapsed >= Math.abs(e.getTime()))
             {
                 result = true;
@@ -92,10 +101,12 @@ public class Navigation extends EPS
         // Turning on the spot
         else if (getCurrentEvent().getClass() == TurnEvent.class)
         {
+//            com.lmrobotics.litcode.autonomous.opmodes.SampleAutoOpMode.debugHook = "cef 5";
             TurnEvent e = (TurnEvent) getCurrentEvent();
             // TODO check if the event is angle or time based then check if done
             if( elapsed >= Math.abs(e.getTime()))
             {
+//                com.lmrobotics.litcode.autonomous.opmodes.SampleAutoOpMode.debugHook = "cef 6";
                 result = true;
                 drive.stopMotors();
             }
@@ -103,11 +114,14 @@ public class Navigation extends EPS
         // Unknown event type, return that the current event is done
         else
         {
+//            com.lmrobotics.litcode.autonomous.opmodes.SampleAutoOpMode.debugHook = "cef 7";
             // If return false in this case then the event will never be considered complete.
             // False means event is not completed.
             result = true;
             drive.stopMotors();
         }
+//        com.lmrobotics.litcode.autonomous.opmodes.SampleAutoOpMode.debugHook = "cef 8";
+//        com.lmrobotics.litcode.autonomous.opmodes.SampleAutoOpMode.debugHook = "Nav check done done2";
         return result;
     }
 
@@ -117,6 +131,7 @@ public class Navigation extends EPS
      */
     private void doMove(MoveEvent event)
     {
+        com.lmrobotics.litcode.autonomous.opmodes.SampleAutoOpMode.debugHook = "Nav move";
         // Time-based movement
         if (event.isUsingTime())
         {
@@ -128,7 +143,7 @@ public class Navigation extends EPS
             // forwards
             else
             {
-                drive.setPower(1.0f, 1.0f);
+                drive.setPower(1.0, 0.45);
             }
         }
         // Coordinate-based movement
@@ -141,6 +156,7 @@ public class Navigation extends EPS
     /** Turn to a specific heading without moving forward or backward. */
     private void doTurn(TurnEvent event)
     {
+        com.lmrobotics.litcode.autonomous.opmodes.SampleAutoOpMode.debugHook = "Nav turn";
         // Time-based turning
         if (event.isUsingTime())
         {

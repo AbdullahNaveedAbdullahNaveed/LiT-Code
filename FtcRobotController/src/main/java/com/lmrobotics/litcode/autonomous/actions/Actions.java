@@ -21,23 +21,27 @@ public class Actions extends EPS
      */
     public Actions(HardwareMap hardwareMap)
     {
+        com.lmrobotics.litcode.autonomous.opmodes.SampleAutoOpMode.debugHook = "Act Init";
         SampleAutoOpMode.telemetryAccess.addData("INFO", "Actions Initialized");
     }
 
     @Override
     public void init()
     {
+        com.lmrobotics.litcode.autonomous.opmodes.SampleAutoOpMode.debugHook = "Act Start";
         SampleAutoOpMode.telemetryAccess.addData("INFO", "Actions Started");
     }
 
     @Override
     public void initEvent()
     {
+        com.lmrobotics.litcode.autonomous.opmodes.SampleAutoOpMode.debugHook = "Act event Init";
     }
 
     @Override
     public void oneCycle()
     {
+        com.lmrobotics.litcode.autonomous.opmodes.SampleAutoOpMode.debugHook = "Act cycle";
 //        // Sample event
 //        if (getCurrentEvent().getClass() == SampleActionEvent.class)
 //        {
@@ -53,6 +57,7 @@ public class Actions extends EPS
     @Override
     protected boolean currentEventFinished()
     {
+        com.lmrobotics.litcode.autonomous.opmodes.SampleAutoOpMode.debugHook = "Act check done";
 //        // Sample event
 //        if (getCurrentEvent().getClass() == SampleActionEvent.class)
 //        {

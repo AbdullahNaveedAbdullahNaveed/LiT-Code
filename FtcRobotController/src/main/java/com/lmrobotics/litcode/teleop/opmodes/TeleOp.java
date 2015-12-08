@@ -26,14 +26,15 @@ public class TeleOp extends OpMode
     @Override
     public void loop()
     {
-        float leftDriveControl = gamepad1.left_stick_y / 127;
-        float rightDriveControl = gamepad1.right_stick_y / 127;
+        float leftDriveControl = gamepad1.left_stick_y;
+        telemetry.addData("LEFT", leftDriveControl);
+        float rightDriveControl = gamepad1.right_stick_y;
         // Left and right drive motor control
 
 
         if (Math.abs(leftDriveControl) >= deadBand)
         {
-            drive.setLeft((int)(leftDriveControl / scaleSpeed));
+            drive.setLeft(leftDriveControl / scaleSpeed);
         }
         else
         {
@@ -42,20 +43,20 @@ public class TeleOp extends OpMode
         // To control the robot with the left stick
         if (Math.abs(rightDriveControl)  >= deadBand)
         {
-            drive.setRight((int)(rightDriveControl / scaleSpeed));
+            drive.setRight(rightDriveControl / scaleSpeed);
         }
         else
         {
             drive.setRight(0);
         }
         // To control the robot with the right stick
-        if (gamepad1.a)
+        if (gamepad1.left_bumper || gamepad1.right_bumper)
         {
-            scaleSpeed =  2;
+            scaleSpeed =  2.0f;
         }
         else
         {
-            scaleSpeed = 1;
+            scaleSpeed = 1.0f;
         }
 //        if (gamepad1.right_trigger)
 //        {

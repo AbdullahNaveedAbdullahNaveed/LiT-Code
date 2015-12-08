@@ -15,7 +15,7 @@ public abstract class EPS
     /** If the EPS is waiting for a new block of events to be queued. */
     private boolean waitingForNewEvents = false;
     /** The current event to run. */
-    private AutonomousEvent currentEvent;
+    private AutonomousEvent currentEvent = null;
     /** Used to indicate when the current event should terminate early regardless of if
      * it is done.
      */
@@ -24,6 +24,7 @@ public abstract class EPS
     /** Normal EPS setup. */
     public EPS()
     {
+        com.lmrobotics.litcode.autonomous.opmodes.SampleAutoOpMode.debugHook = "EPS Init";
         queue = new ConcurrentLinkedQueue<AutonomousEvent>();
     }
 
@@ -44,32 +45,35 @@ public abstract class EPS
     /** Starts up the thread for this EPS and calls the subclass method for unique setup. */
     public void start()
     {
-        // Set the first event
-        setNextEvent();
+        com.lmrobotics.litcode.autonomous.opmodes.SampleAutoOpMode.debugHook = "EPS start";
+        // Prepare this EPS for receiving new events
+        waitForNewEvents();
         // Initialize the child class
         init();
     }
 
-    /** Runs one cycle of events for this system, unless this system specifies it is waiting
-     * for new events to be added to its queue.
+    /** Runs one cycle of events for this system, unless it is waiting for new events to be added
+     * to its queue.
      */
     public void runUnlessDone()
     {
+        com.lmrobotics.litcode.autonomous.opmodes.SampleAutoOpMode.debugHook = "EPS run unless dn";
         if (!isWaitingForNewEvents())
         {
             run();
         }
     }
 
-    /** Run one cycle of this system, using runUnlessDone() should be preferred/used instead. */
-    public void run()
+    /** Run one cycle of this system. */
+    private void run()
     {
+        com.lmrobotics.litcode.autonomous.opmodes.SampleAutoOpMode.debugHook = "EPS run";
         // Check if the current event is finished, and move to the next one
-        if (currentEventFinished() || terminateEarly)
+        if (getCurrentEvent() == null || terminateEarly || currentEventFinished())
         {
             // Set the next event
             setNextEvent();
-            // Queue has emptied, return
+            // Queue has emptied, wait for new events
             if (getCurrentEvent() == null)
             {
                 waitForNewEvents();
@@ -80,11 +84,7 @@ public abstract class EPS
             SampleAutoOpMode.telemetryAccess.addData("INFO", "Starting Event: " + getCurrentEvent().getClass().getSimpleName());
         }
         // Run one cycle
-        else
-        {
-            // Child class cycling
-            oneCycle();
-        }
+        oneCycle();
     }
 
     /** Checks if this EPS is waiting for new events to be added to its queue. */
@@ -98,7 +98,9 @@ public abstract class EPS
     {
         // Set the new queue
         queue = newQueue;
-        setNextEvent();
+        terminateEarly = false;
+        waitingForNewEvents = false;
+        currentEvent = null;
     }
 
     /** Gets the current event. */
