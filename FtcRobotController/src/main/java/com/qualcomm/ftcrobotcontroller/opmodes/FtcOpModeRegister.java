@@ -31,6 +31,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 
 package com.qualcomm.ftcrobotcontroller.opmodes;
 
+import com.lmrobotics.litcode.autonomous.opmodes.SampleAutoOpModeBlue;
 import com.qualcomm.robotcore.eventloop.opmode.OpModeManager;
 import com.qualcomm.robotcore.eventloop.opmode.OpModeRegister;
 
@@ -57,14 +58,14 @@ public class FtcOpModeRegister implements OpModeRegister {
 
     manager.register("NullOp", NullOp.class);
 
-    manager.register("MatrixK9TeleOp", MatrixK9TeleOp.class);
-    manager.register("K9TeleOp", K9TeleOp.class);
-    manager.register ("PushBotAuto", PushBotAuto.class);
-    manager.register ("PushBotManual", PushBotManual.class);
+//    manager.register("MatrixK9TeleOp", MatrixK9TeleOp.class);
+//    manager.register("K9TeleOp", K9TeleOp.class);
+//    manager.register ("PushBotAuto", PushBotAuto.class);
+//    manager.register ("PushBotManual", PushBotManual.class);
     /* LiT OpModes */
     manager.register("SpiderBot TeleOp 1", com.lmrobotics.litcode.teleop.opmodes.TeleOp.class);
-    manager.register("SpiderBot Auto Test", com.lmrobotics.litcode.autonomous.opmodes.SampleAutoOpMode.class);
-
+    manager.register("SpiderBot Auto Park Red", com.lmrobotics.litcode.autonomous.opmodes.SampleAutoOpMode.class);
+    manager.register("SpiderBot Auto Park Blue", com.lmrobotics.litcode.autonomous.opmodes.SampleAutoOpModeBlue.class);
     /*
      * Uncomment any of the following lines if you want to register an op mode.
      */

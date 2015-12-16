@@ -1,14 +1,14 @@
 package com.lmrobotics.litcode.autonomous;
 
+import com.lmrobotics.litcode.autonomous.navigation.events.MoveEvent;
+import com.lmrobotics.litcode.autonomous.navigation.events.TurnEvent;
+import com.lmrobotics.litcode.autonomous.opmodes.SampleAutoOpMode;
+
 import java.util.LinkedList;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-import com.lmrobotics.litcode.autonomous.navigation.events.*;
-import com.lmrobotics.litcode.autonomous.HLQGenerator;
-import com.lmrobotics.litcode.autonomous.opmodes.SampleAutoOpMode;
-
 /** Represents one block of events for the High Level Queue (HLQ) in EventManager. */
-public class EventBlock
+public class EventBlockAlt
 {
     /** Used during event setup to indicate no valid coordinate was found. */
     private static final double INVALID_COORDINATE = -1000000000.0;
@@ -24,12 +24,12 @@ public class EventBlock
      * @param navData the Navigation events data
      * @param actData the Actions events data
      */
-    public EventBlock(LinkedList<String[]> navData, LinkedList<String[]> actData)
+    public EventBlockAlt(LinkedList<String[]> navData, LinkedList<String[]> actData)
     {
         navEvents = new ConcurrentLinkedQueue<AutonomousEvent>();
         actionEvents = new ConcurrentLinkedQueue<AutonomousEvent>();
         navEvents.add(new MoveEvent(4000, 1.0));
-        navEvents.add(new TurnEvent(1.0, -525));
+        navEvents.add(new TurnEvent(1.0, 525));
         navEvents.add(new MoveEvent(375, 1.0));
         // Generate the navigation event queue
 //        navEvents = generateNavEvents(navData);

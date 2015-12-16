@@ -1,6 +1,5 @@
 package com.lmrobotics.litcode.autonomous;
 
-import com.lmrobotics.litcode.autonomous.navigation.events.MoveEvent;
 import com.lmrobotics.litcode.autonomous.opmodes.SampleAutoOpMode;
 
 import java.util.LinkedList;
@@ -33,7 +32,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  * ENDBLOCK;<br>
  */
 @SuppressWarnings("SpellCheckingInspection")
-public class HLQGenerator
+public class HLQGeneratorAlt
 {
     public static int invalidLines = 0;
     public static int invalidEvents = 0;
@@ -49,7 +48,7 @@ public class HLQGenerator
      *                   extension)
      * @return the HLQ object
      */
-    public static synchronized ConcurrentLinkedQueue<EventBlock> makeHLQFromFile(String configName)
+    public static synchronized ConcurrentLinkedQueue<EventBlockAlt> makeHLQFromFile(String configName)
     {
         String rawData = "UNLOADED FILE: " + configName;
         // TODO read data from file and format it as needed
@@ -60,7 +59,7 @@ public class HLQGenerator
      * @param rawData a one line string containing all the config data
      * @return the HLQ object
      */
-    public static synchronized ConcurrentLinkedQueue<EventBlock> makeHLQFromString(String rawData)
+    public static synchronized ConcurrentLinkedQueue<EventBlockAlt> makeHLQFromString(String rawData)
     {
         // Build the queue
         return buildHLQ(rawData);
@@ -70,15 +69,13 @@ public class HLQGenerator
      * @param rawData the config text as a one line string
      * @return the HLQ object
      */
-    private static ConcurrentLinkedQueue<EventBlock> buildHLQ(String rawData)
+    private static ConcurrentLinkedQueue<EventBlockAlt> buildHLQ(String rawData)
     {
-        com.lmrobotics.litcode.autonomous.opmodes.SampleAutoOpMode.debugHook = "HLQ Build";
-        ConcurrentLinkedQueue<EventBlock> newHLQ = new ConcurrentLinkedQueue<EventBlock>();
-        newHLQ.add(new EventBlock(new LinkedList<String[]>(), new LinkedList<String[]>()));
+        SampleAutoOpMode.debugHook = "HLQ Build";
+        ConcurrentLinkedQueue<EventBlockAlt> newHLQ = new ConcurrentLinkedQueue<EventBlockAlt>();
+        newHLQ.add(new EventBlockAlt(new LinkedList<String[]>(), new LinkedList<String[]>()));
         // Remove certain whitespace characters then separate data by semicolon
         String[] lines = rawData.replaceAll("[ \n\r\t\b\f]", "").split(";");
-//        SampleAutoOpMode.telemetryAccess.addData("EDAT", lines.length);
-//        SampleAutoOpMode.telemetryAccess.addData("EDAT2", lines[0]);
         // The lines containing navigation event data for current block
         LinkedList<String[]> navData = new LinkedList<String[]>();
         // Line containing actions event data for the current block
@@ -86,14 +83,6 @@ public class HLQGenerator
         for (String line : lines)
         {
             String[] keys = line.split(",");
-            if (containsKey(keys, "STARTBLOCK"))
-            {
-                SampleAutoOpMode.telemetryAccess.addData("EDAT", "YES");
-            }
-            else
-            {
-                SampleAutoOpMode.telemetryAccess.addData("EDAT", "NO");
-            }
             if (containsKey(keys, "INIT"))
             {
                 // TODO parse line to get initial settings
@@ -107,7 +96,7 @@ public class HLQGenerator
             // Ending current block, generate the actual EventBlock object and add it to the queue
             else if (containsKey(keys, "ENDBLOCK"))
             {
-                newHLQ.add(new EventBlock(navData, actData));
+                newHLQ.add(new EventBlockAlt(navData, actData));
             }
             // Navigation event, add it to the list of nav. event data
             else if (containsKey(keys, "NAVIGATION"))
@@ -140,11 +129,16 @@ public class HLQGenerator
         // Search for the key
         for (String piece : keys)
         {
-            String currKey = piece;
+            String currKey;
             // A key:value pair
             if (piece.contains("="))
             {
                 currKey = piece.split("=")[0];
+            }
+            // A key with no value
+            else
+            {
+                currKey = piece;
             }
             // Check if this key value is the key we are checking for
             if (currKey == key)
