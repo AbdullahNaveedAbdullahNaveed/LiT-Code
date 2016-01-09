@@ -4,6 +4,7 @@ import com.lmrobotics.litcode.autonomous.navigation.events.MoveEvent;
 import com.lmrobotics.litcode.autonomous.opmodes.SampleAutoOpMode;
 
 import java.util.LinkedList;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 /** Creates High-Level Queue (HLQ) objects (A ConcurrentLinkedQueue<EventBlock> object) used
@@ -32,13 +33,15 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  * NAVIGATION,EVENT=MoveEvent,TIME=-100;<br>
  * ENDBLOCK;<br>
  */
-@SuppressWarnings("SpellCheckingInspection")
 public class HLQGenerator
 {
     public static int invalidLines = 0;
     public static int invalidEvents = 0;
+    @Deprecated
     public static double startX = 0;
+    @Deprecated
     public static double startY = 0;
+    @Deprecated
     public static double startHeading = 0;
 
     /** Generates the HLQ object using the specified config file.
@@ -49,7 +52,7 @@ public class HLQGenerator
      *                   extension)
      * @return the HLQ object
      */
-    public static synchronized ConcurrentLinkedQueue<EventBlock> makeHLQFromFile(String configName)
+    public static synchronized HLQ makeHLQFromFile(String configName)
     {
         String rawData = "UNLOADED FILE: " + configName;
         // TODO read data from file and format it as needed
@@ -60,7 +63,7 @@ public class HLQGenerator
      * @param rawData a one line string containing all the config data
      * @return the HLQ object
      */
-    public static synchronized ConcurrentLinkedQueue<EventBlock> makeHLQFromString(String rawData)
+    public static synchronized HLQ makeHLQFromString(String rawData)
     {
         // Build the queue
         return buildHLQ(rawData);
@@ -70,54 +73,47 @@ public class HLQGenerator
      * @param rawData the config text as a one line string
      * @return the HLQ object
      */
-    private static ConcurrentLinkedQueue<EventBlock> buildHLQ(String rawData)
+    private static HLQ buildHLQ(String rawData)
     {
-        com.lmrobotics.litcode.autonomous.opmodes.SampleAutoOpMode.debugHook = "HLQ Build";
-        ConcurrentLinkedQueue<EventBlock> newHLQ = new ConcurrentLinkedQueue<EventBlock>();
-        newHLQ.add(new EventBlock(new LinkedList<String[]>(), new LinkedList<String[]>()));
+		com.lmrobotics.litcode.autonomous.opmodes.SampleAutoOpMode.debugHook = "HLQ Build";
+        ConcurrentLinkedQueue<EventBlock> eventQueue = new ConcurrentLinkedQueue<EventBlock>();
+        ConcurrentHashMap<HLQ.InitSetting, Object> initSettings = new ConcurrentHashMap<HLQ.InitSetting, Object>();
         // Remove certain whitespace characters then separate data by semicolon
         String[] lines = rawData.replaceAll("[ \n\r\t\b\f]", "").split(";");
-//        SampleAutoOpMode.telemetryAccess.addData("EDAT", lines.length);
-//        SampleAutoOpMode.telemetryAccess.addData("EDAT2", lines[0]);
         // The lines containing navigation event data for current block
-        LinkedList<String[]> navData = new LinkedList<String[]>();
+        LinkedList<ConcurrentHashMap<String, String>> navData =
+                new LinkedList<ConcurrentHashMap<String, String>>();
         // Line containing actions event data for the current block
-        LinkedList<String[]> actData = new LinkedList<String[]>();
+        LinkedList<ConcurrentHashMap<String, String>> actData =
+                new LinkedList<ConcurrentHashMap<String, String>>();
         for (String line : lines)
         {
-            String[] keys = line.split(",");
-            if (containsKey(keys, "STARTBLOCK"))
+            ConcurrentHashMap<String, String> keySet = makeKeySet(line);
+            // Initial robot data, like starting position, etc.
+            if (keySet.containsKey("INIT"))
             {
-                SampleAutoOpMode.telemetryAccess.addData("EDAT", "YES");
-            }
-            else
-            {
-                SampleAutoOpMode.telemetryAccess.addData("EDAT", "NO");
-            }
-            if (containsKey(keys, "INIT"))
-            {
-                // TODO parse line to get initial settings
+                initSettings = makeInitialSettings(keySet);
             }
             // Starting a new block, clear data from previous block
-            else if (containsKey(keys, "STARTBLOCK"))
+            else if (keySet.containsKey("STARTBLOCK"))
             {
                 navData.clear();
                 actData.clear();
             }
             // Ending current block, generate the actual EventBlock object and add it to the queue
-            else if (containsKey(keys, "ENDBLOCK"))
+            else if (keySet.containsKey("ENDBLOCK"))
             {
-                newHLQ.add(new EventBlock(navData, actData));
+                eventQueue.add(new EventBlock(navData, actData));
             }
             // Navigation event, add it to the list of nav. event data
-            else if (containsKey(keys, "NAVIGATION"))
+            else if (keySet.containsKey("NAVIGATION"))
             {
-                navData.add(keys);
+                navData.add(keySet);
             }
             // Action event, add it to the list of action event data
-            else if (containsKey(keys, "ACTION"))
+            else if (keySet.containsKey("ACTION"))
             {
-                actData.add(keys);
+                actData.add(keySet);
             }
             // Unknown line of config data
             else
@@ -126,59 +122,156 @@ public class HLQGenerator
                 // TODO Indicate invalid line of data to user
             }
         }
-//        SampleAutoOpMode.telemetryAccess.addData("INFO", "Bad -Lines:" + Integer.toString(invalidLines) + " -Events:" + Integer.toString(invalidEvents));
-        return newHLQ;
+        //        SampleAutoOpMode.telemetryAccess.addData("INFO", "Bad -Lines:" + Integer.toString(invalidLines) + " -Events:" + Integer.toString(invalidEvents));
+        return new HLQ(initSettings, eventQueue);
     }
 
-    /** Check if the given list of keys and key:value pairs contains the specified key.
-     * @param keys the list of keys and key:value pairs
-     * @param key the key to look for
-     * @return true if the key is in keys, false if it is not
+    /**
+     * @param cmdLine the comma-delimited set of key and key:value pairs
+     * @return a map with no-value keys (STARTBLOCK, etc) having an empty
+     * 		string for a value
      */
-    public static boolean containsKey(String[] keys, String key)
+    private static ConcurrentHashMap<String, String> makeKeySet(String cmdLine)
     {
-        // Search for the key
-        for (String piece : keys)
+        ConcurrentHashMap<String, String> keys = new ConcurrentHashMap<String, String>();
+        String[] pairs = cmdLine.split(",");
+        for (String pair : pairs)
         {
-            String currKey = piece;
-            // A key:value pair
-            if (piece.contains("="))
+            if (pair.contains("="))
             {
-                currKey = piece.split("=")[0];
+                String[] key_val = pair.split("=");
+                if (key_val.length <= 1)
+                {
+                    SampleAutoOpMode.telemetryAccess.addData(
+                            "WARNING",
+                            "\'"
+                                    + pair
+                                    + "\' is not a valid config parameter."
+                    );
+                    continue;
+                }
+                else
+                {
+                    keys.put(key_val[0], key_val[1]);
+                }
             }
-            // Check if this key value is the key we are checking for
-            if (currKey == key)
+            else
             {
-                return true;
+                keys.put(pair, "");
             }
         }
-        // Key not found
-        return false;
+        return keys;
     }
 
-    /** Find the value for a key=value pair, returns null if value could not be found.
-     * @param keys the list of keys and key:value pairs
-     * @param key the key to get a value from
-     * @return the value associated with the key
-     */
-    public static String findKeyValue(String[] keys, String key)
+    private static ConcurrentHashMap<HLQ.InitSetting, Object> makeInitialSettings(ConcurrentHashMap<String, String> keys)
     {
-        return findKeyValue(keys, key, null);
-    }
-
-    /** Find the value for a key=value pair, takes an argument for a default value if the
-     * value could not be found.
-     * @param pieces the list of pieces containing at lease 1 key=value pair
-     * @param key the identifier to look for
-     * @param defaultValue returned if the value of the key could not be found
-     * @return the value part of a key=value pair, or defaultValue if key=value is not found
-     */
-    public static String findKeyValue(String[] pieces, String key, String defaultValue)
-    {
-        String value = defaultValue;
-        for (String piece : pieces)
+        ConcurrentHashMap<HLQ.InitSetting, Object> settings =
+                new ConcurrentHashMap<HLQ.InitSetting, Object>();
+        for (HLQ.InitSetting is : HLQ.InitSetting.values())
         {
-            // TODO implement
+            if (keys.containsKey(is.toString()))
+            {
+                String keyVal = keys.get(is.toString());
+                Object value;
+                try
+                {
+                    switch (is)
+                    {
+                        case HEADING:
+                            value = new Integer(toInteger(keyVal));
+                            break;
+                        case X:
+                            value = new Double(toDouble(keyVal));
+                            // Fall Through
+                        case Y:
+                            value = new Double(toDouble(keyVal));
+                            break;
+                        case ALLIANCE:
+                            value = new String(keyVal);
+                            break;
+                        default:
+                            continue;
+                    }
+                    settings.put(is, value);
+                }
+                catch (NumberFormatException e)
+                {
+                    SampleAutoOpMode.telemetryAccess.addData(
+                            "WARNING",
+                            "INIT value \'"
+                                    + is.toString()
+                                    + "="
+                                    + keyVal
+                                    + "\' was not formatted correctly."
+                    );
+                }
+            }
+        }
+        return settings;
+    }
+
+    /** Parse and return an integer from the specified string.
+     * @param fromString the string to try to parse an integer from
+     * @return an integer parsed from the string
+     * @throws NumberFormatException when the string is not a valid integer
+     */
+    public static int toInteger(String fromString) throws NumberFormatException
+    {
+        return Integer.parseInt(fromString);
+    }
+
+    /** Parse and return an integer from the specified string.
+     * @param fromString the string to try to parse an integer from
+     * @param defaultValue the default value to return if the string could not be parsed
+     * @return an integer parsed from fromString or defaultValue as appropriate
+     */
+    public static int toInteger(String fromString, int defaultValue)
+    {
+        try
+        {
+            return toInteger(fromString);
+        }
+        catch (NumberFormatException e)
+        {
+            return defaultValue;
+        }
+    }
+
+    /** Parse and return a double from the specified string.
+     * @param fromString the string to try to parse a double from
+     * @return a double parsed from the string
+     * @throws NumberFormatException when the string is not a valid double
+     */
+    public static double toDouble(String fromString) throws NumberFormatException
+    {
+        return Double.parseDouble(fromString);
+    }
+
+    /** Fairly safe way to parse a string to get a double value.
+     * @param fromString the string to parse
+     * @param defaultValue the value to return if the string could not be parsed as a number
+     * @return fromString parsed as a double, or defaultValue if fromString isn't a number
+     */
+    public static double toDouble(String fromString, double defaultValue)
+    {
+        double value;
+        try
+        {
+            // If value contains a decimal, try to parse it as a double
+            if (fromString.contains("."))
+            {
+                value = toDouble(fromString);
+            }
+            // Doesn't contain a decimal, try to parse it as an integer
+            else
+            {
+                value = (double) toInteger(fromString);
+            }
+        }
+        // Invalid number, return the specified default value
+        catch (NumberFormatException e)
+        {
+            return defaultValue;
         }
         return value;
     }

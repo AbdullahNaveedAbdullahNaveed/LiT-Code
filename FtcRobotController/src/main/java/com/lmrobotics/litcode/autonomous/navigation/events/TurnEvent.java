@@ -35,6 +35,7 @@ public class TurnEvent extends BaseNavigationEvent
      */
     public int getHeading()
     {
+        // TODO Flip angle based on alliance initial setting
         return heading;
     }
 }

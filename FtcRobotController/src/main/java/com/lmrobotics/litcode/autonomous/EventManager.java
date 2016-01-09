@@ -18,7 +18,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
  */
 public class EventManager
 {
-    private ConcurrentLinkedQueue<EventBlock> HLQ;
+    private HLQ HLQ;
     private Navigation navigation;
     private Actions actions;
 
@@ -51,11 +51,7 @@ public class EventManager
     public void start()
     {
         SampleAutoOpMode.telemetryAccess.addData("INFO", "Starting...");
-        // Setup the first block
-//        EventBlock nextEB = HLQ.poll();
-//        navigation.queueNextBlock(nextEB.getNavEvents());
-//        actions.queueNextBlock(nextEB.getActionEvents());
-        // starts navigation and action events
+        // Starts navigation and action systems
         navigation.start();
         actions.start();
     }
@@ -70,7 +66,7 @@ public class EventManager
         if (navigation.isWaitingForNewEvents() && actions.isWaitingForNewEvents())
         {
             // Get next event block
-            EventBlock nextEB = HLQ.poll();
+            EventBlock nextEB = HLQ.getNextEventBlock();
             // If we just finished the last block of events, stop running
             if (nextEB == null)
             {

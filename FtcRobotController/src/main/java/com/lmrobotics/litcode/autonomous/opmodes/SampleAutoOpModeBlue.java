@@ -1,7 +1,6 @@
 package com.lmrobotics.litcode.autonomous.opmodes;
 
 import com.lmrobotics.litcode.autonomous.EventManager;
-import com.lmrobotics.litcode.autonomous.EventManagerAlt;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.robocol.Telemetry;
 
@@ -10,8 +9,15 @@ public class SampleAutoOpModeBlue extends OpMode
 {
     /** */
     public static final boolean DEBUG_ENABLED = true;
-    private static final String sampleConfigData = "STARTBLOCK; NAVIGATION,EVENT=MoveEvent,TIME=2000,MAX_SPEED=1.0; ENDBLOCK;";
-    private EventManagerAlt em;
+    private static final String sampleConfigData =
+            "INIT,X=1.0,Y=1.0,HEADING=20,ALLIANCE=BLUE;"
+                    + "STARTBLOCK;"
+                    + "NAVIGATION,EVENT=MoveEvent,TIME=4000;"
+                    + "NAVIGATION,EVENT=TurnEvent,TIME=525;"
+                    + "NAVIGATION,EVENT=MoveEvent,TIME=375,MAX_SPEED=0.8;"
+                    + "ENDBLOCK;"
+            ;
+    private EventManager em;
     /** Public program-wide access to the telemetry. */
     public static Telemetry telemetryAccess;
     public static String debugHook;
@@ -28,7 +34,7 @@ public class SampleAutoOpModeBlue extends OpMode
             try
             {
                 debugHook = "Opmode init";
-                em = new EventManagerAlt(hardwareMap, sampleConfigData, true);
+                em = new EventManager(hardwareMap, sampleConfigData, true);
             }
             catch (Exception e)
             {
@@ -39,7 +45,7 @@ public class SampleAutoOpModeBlue extends OpMode
         }
         else
         {
-            em = new EventManagerAlt(hardwareMap, sampleConfigData, true);
+            em = new EventManager(hardwareMap, sampleConfigData, true);
         }
     }
 

@@ -9,7 +9,14 @@ public class SampleAutoOpMode extends OpMode
 {
     /** */
     public static final boolean DEBUG_ENABLED = true;
-    private static final String sampleConfigData = "STARTBLOCK; NAVIGATION,EVENT=MoveEvent,TIME=2000,MAX_SPEED=1.0; ENDBLOCK;";
+    private static final String sampleConfigData =
+            "INIT,X=1.0,Y=1.0,HEADING=20,ALLIANCE=RED;"
+            + "STARTBLOCK;"
+            + "NAVIGATION,EVENT=MoveEvent,TIME=4000;"
+            + "NAVIGATION,EVENT=TurnEvent,TIME=-525;"
+            + "NAVIGATION,EVENT=MoveEvent,TIME=375,MAX_SPEED=0.8;"
+            + "ENDBLOCK;"
+            ;
     private EventManager em;
     /** Public program-wide access to the telemetry. */
     public static Telemetry telemetryAccess;

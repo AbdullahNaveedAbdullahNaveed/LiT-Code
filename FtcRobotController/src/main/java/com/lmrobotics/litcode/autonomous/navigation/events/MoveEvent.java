@@ -68,6 +68,7 @@ public class MoveEvent extends BaseNavigationEvent
     public int calcHeading()
     {
         // TODO implement
+        // TODO Flip angle based on alliance initial setting
         return 180;
     }
 }
