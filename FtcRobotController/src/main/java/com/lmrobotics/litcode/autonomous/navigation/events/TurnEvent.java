@@ -38,4 +38,54 @@ public class TurnEvent extends BaseNavigationEvent
         // TODO Flip angle based on alliance initial setting
         return heading;
     }
+
+    @Override
+    protected void init()
+    {
+    }
+
+    @Override
+    public void oneCycle()
+    {
+        com.lmrobotics.litcode.autonomous.opmodes.SampleAutoOpMode.debugHook = "Nav turn";
+        // Time-based turning
+        if (isUsingTime())
+        {
+            // Left
+            if (getTime() < 0)
+            {
+                drive.setPower(-1.0f, 1.0f);
+            }
+            // Right
+            else
+            {
+                drive.setPower(1.0f, -1.0f);
+            }
+        }
+        // Angle-based turning
+        else
+        {
+            // TODO replace code with heading-based implementation
+        }
+    }
+
+    @Override
+    public boolean isFinished()
+    {
+        long now = System.currentTimeMillis();
+        long elapsed = now - getStartTime();
+        boolean result = false;
+        // TODO check if the event is angle or time based then check if done
+        if( elapsed >= Math.abs(getTime()))
+        {
+            result = true;
+        }
+        return false;
+    }
+
+    @Override
+    public void cleanup()
+    {
+        drive.stopMotors();
+    }
 }

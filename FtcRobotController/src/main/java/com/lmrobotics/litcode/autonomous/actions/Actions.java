@@ -1,5 +1,6 @@
 package com.lmrobotics.litcode.autonomous.actions;
 
+import com.lmrobotics.litcode.autonomous.actions.events.BaseActionEvent;
 import com.lmrobotics.litcode.autonomous.opmodes.SampleAutoOpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -36,37 +37,40 @@ public class Actions extends EPS
     public void initEvent()
     {
         com.lmrobotics.litcode.autonomous.opmodes.SampleAutoOpMode.debugHook = "Act event Init";
+        getCurrentEvent().initEvent();
     }
 
     @Override
     public void oneCycle()
     {
         com.lmrobotics.litcode.autonomous.opmodes.SampleAutoOpMode.debugHook = "Act cycle";
-//        // Sample event
-//        if (getCurrentEvent().getClass() == SampleActionEvent.class)
-//        {
-//             doSample((SampleActionEvent) getCurrentEvent());
-//        }
-//        // Unused event type, move to the next queued event
-//        else
-//        {
+//      // Invalid action event, terminate early and return
+        if (getCurrentEvent() == null || !(getCurrentEvent() instanceof BaseActionEvent))
+        {
             terminateEarly();
-//        }
+            return;
+        }
+        // Otherwise run one cycle of the event
+        else
+        {
+            getCurrentEvent().oneCycle();
+        }
     }
 
     @Override
     protected boolean currentEventFinished()
     {
-        com.lmrobotics.litcode.autonomous.opmodes.SampleAutoOpMode.debugHook = "Act check done";
-//        // Sample event
-//        if (getCurrentEvent().getClass() == SampleActionEvent.class)
-//        {
-//            return true;
-//        }
-//        // Unknown event type, return that the current event is done
-//        else
-//        {
-            return true;
-//        }
+        boolean result = false;
+        // No event set
+        if (getCurrentEvent() == null || !(getCurrentEvent() instanceof BaseActionEvent))
+        {
+            result = true;
+        }
+        // Ask the current event if it is finished
+        else
+        {
+            result = getCurrentEvent().isFinished();
+        }
+        return result;
     }
 }

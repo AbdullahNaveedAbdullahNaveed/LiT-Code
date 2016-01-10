@@ -71,6 +71,11 @@ public abstract class EPS
         // Check if the current event is finished, and move to the next one
         if (getCurrentEvent() == null || terminateEarly || currentEventFinished())
         {
+            // Cleanup an event before moving to the next one
+            if (getCurrentEvent() != null)
+            {
+                getCurrentEvent().cleanup();
+            }
             // Set the next event
             setNextEvent();
             // Queue has emptied, wait for new events

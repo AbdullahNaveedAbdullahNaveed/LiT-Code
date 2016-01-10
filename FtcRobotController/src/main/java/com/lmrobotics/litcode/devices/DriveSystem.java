@@ -1,5 +1,6 @@
 package com.lmrobotics.litcode.devices;
 
+import com.lmrobotics.litcode.autonomous.opmodes.SampleAutoOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -8,20 +9,43 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
  */
 public class DriveSystem
 {
-    private DcMotor[] leftMotors;
-    private DcMotor[] rightMotors;
+    /** Used so that the static setup function will only setup stuff once. */
+    private static boolean isSetup = false;
+    /** The left drive motors. */
+    private static DcMotor[] leftMotors = new DcMotor[2];
+    /** The right drive motors. */
+    private static DcMotor[] rightMotors = new DcMotor[2];
 
-    /** Normal constructor, needs the hardware map to get the motors. */
-    public DriveSystem(HardwareMap hardwareMap)
+    /** Initial setup for the drive system. */
+    public static void setup(HardwareMap hardwareMap)
     {
-        leftMotors = new DcMotor[2];
+        // Return if setup is already complete
+        if (isSetup)
+        {
+            return;
+        }
+        isSetup = true;
+        // Get the left motors
         leftMotors[0] = hardwareMap.dcMotor.get("frontLeftDrive");
         leftMotors[1] = hardwareMap.dcMotor.get("backLeftDrive");
-        rightMotors = new DcMotor[2];
+        // Get the right motors
         rightMotors[0] = hardwareMap.dcMotor.get("frontRightDrive");
         rightMotors[1] = hardwareMap.dcMotor.get("backRightDrive");
     }
 
+    /** A legacy constructor for a drive system, calls the setup(hardwareMap) function
+     * which sets up motor access, etc. if it has not already been setup.
+     * @param hardwareMap the hardware map for the robotics controller
+     */
+    public DriveSystem(HardwareMap hardwareMap)
+    {
+        setup(hardwareMap);
+    }
+
+    /** Basic constructor. */
+    public DriveSystem()
+    {
+    }
 
     /**
      * Sets the power of all drive motors on the left of the robot
@@ -29,6 +53,14 @@ public class DriveSystem
      */
     public synchronized void setLeft(float power)
     {
+        if (!isSetup)
+        {
+            SampleAutoOpMode.telemetryAccess.addData(
+                    "WARNING",
+                    "Attempted to access drive system before setup."
+            );
+            return;
+        }
         // for each motor in leftMotors...
         for (DcMotor motor : leftMotors)
         {
@@ -51,6 +83,14 @@ public class DriveSystem
      */
     public synchronized void setRight(float power)
     {
+        if (!isSetup)
+        {
+            SampleAutoOpMode.telemetryAccess.addData(
+                    "WARNING",
+                    "Attempted to access drive system before setup."
+            );
+            return;
+        }
         // for each motor in leftMotors...
         for (DcMotor motor : rightMotors)
         {
@@ -94,6 +134,14 @@ public class DriveSystem
 
     public synchronized void setMotorsReverse()
     {
+        if (!isSetup)
+        {
+            SampleAutoOpMode.telemetryAccess.addData(
+                    "WARNING",
+                    "Attempted to access drive system before setup."
+            );
+            return;
+        }
         for (DcMotor motor : leftMotors)
         {
             motor.setDirection(DcMotor.Direction.REVERSE);
