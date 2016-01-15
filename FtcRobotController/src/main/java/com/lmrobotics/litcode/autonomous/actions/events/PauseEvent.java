@@ -5,16 +5,18 @@ package com.lmrobotics.litcode.autonomous.actions.events;
  */
 public class PauseEvent extends BaseActionEvent
 {
+    private long pauseFor = 0;
+    private long start = 0;
     /** Basic constructor. */
     public PauseEvent(long pauseFor)
     {
-        // TODO Implement
+        this.pauseFor = pauseFor;
     }
 
     @Override
     public void init()
     {
-        // TODO Implement
+        start = System.currentTimeMillis();
     }
 
     @Override
@@ -25,8 +27,12 @@ public class PauseEvent extends BaseActionEvent
     @Override
     public boolean isFinished()
     {
-        // TODO Implement
-        return true;
+        long currentTime = System.currentTimeMillis();
+        if (currentTime - start >= pauseFor)
+        {
+            return true;
+        }
+        return false;
     }
 
     @Override
