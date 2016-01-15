@@ -32,6 +32,8 @@ public class EventManager
     public EventManager(HardwareMap hardwareMap, String config, boolean rawConfigData)
     {
         SampleAutoOpMode.telemetryAccess.addData("INFO", "Initializing Event Manager...");
+        // Initialize the drive system
+        DriveSystem.setup(hardwareMap);
         // Create the HLQ when we were given the raw config text
         if (rawConfigData)
         {

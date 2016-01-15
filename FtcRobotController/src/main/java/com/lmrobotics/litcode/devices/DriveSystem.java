@@ -31,15 +31,7 @@ public class DriveSystem
         // Get the right motors
         rightMotors[0] = hardwareMap.dcMotor.get("frontRightDrive");
         rightMotors[1] = hardwareMap.dcMotor.get("backRightDrive");
-    }
-
-    /** A legacy constructor for a drive system, calls the setup(hardwareMap) function
-     * which sets up motor access, etc. if it has not already been setup.
-     * @param hardwareMap the hardware map for the robotics controller
-     */
-    public DriveSystem(HardwareMap hardwareMap)
-    {
-        setup(hardwareMap);
+        // Reverse motors as necessary here
     }
 
     /** Basic constructor. */
@@ -77,8 +69,7 @@ public class DriveSystem
         setLeft((float) power);
     }
 
-    /**
-     * Sets the power of all right-side drive motors
+    /** Sets the power of all right-side drive motors
      * @param power
      */
     public synchronized void setRight(float power)
@@ -124,31 +115,12 @@ public class DriveSystem
         setLeft(leftPower);
         setRight(rightPower);
     }
+
     /**
      * TODO document
      */
     public synchronized void stopMotors()
     {
         setPower(0, 0);
-    }
-
-    public synchronized void setMotorsReverse()
-    {
-        if (!isSetup)
-        {
-            SampleAutoOpMode.telemetryAccess.addData(
-                    "WARNING",
-                    "Attempted to access drive system before setup."
-            );
-            return;
-        }
-        for (DcMotor motor : leftMotors)
-        {
-            motor.setDirection(DcMotor.Direction.REVERSE);
-        }
-        for (DcMotor motor : rightMotors)
-        {
-            motor.setDirection(DcMotor.Direction.REVERSE);
-        }
     }
 }

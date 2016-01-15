@@ -19,18 +19,12 @@ import com.lmrobotics.litcode.devices.DriveSystem;
  */
 public class Navigation extends EPS
 {
-    /** The object used to control the drive system. */
-    private DriveSystem drive;
     private PositionSystem ps;
-    private long start;
 
     /** Basic constructor. */
     public Navigation(HardwareMap hardwareMap)
     {
         com.lmrobotics.litcode.autonomous.opmodes.SampleAutoOpMode.debugHook = "Navigation Init";
-        // Initialize the drive system object
-        drive = new DriveSystem(hardwareMap);
-        drive.setMotorsReverse();
         ps = new PositionSystem();
         SampleAutoOpMode.telemetryAccess.addData("INFO", "Navigation Initialized");
     }
