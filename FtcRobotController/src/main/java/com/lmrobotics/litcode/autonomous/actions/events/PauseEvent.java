@@ -5,9 +5,14 @@ package com.lmrobotics.litcode.autonomous.actions.events;
  */
 public class PauseEvent extends BaseActionEvent
 {
+    /** How long it is supposed to pause for. */
     private long pauseFor = 0;
+    /** Used to calculate how long this event has been running. */
     private long start = 0;
-    /** Basic constructor. */
+
+    /** Basic constructor.
+     * @param pauseFor How long it should pause for.
+     */
     public PauseEvent(long pauseFor)
     {
         this.pauseFor = pauseFor;
@@ -28,6 +33,7 @@ public class PauseEvent extends BaseActionEvent
     public boolean isFinished()
     {
         long currentTime = System.currentTimeMillis();
+        //To tell when the pause needs to end.
         if (currentTime - start >= pauseFor)
         {
             return true;
