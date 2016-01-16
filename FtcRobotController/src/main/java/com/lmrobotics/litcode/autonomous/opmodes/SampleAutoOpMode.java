@@ -11,6 +11,7 @@ public class SampleAutoOpMode extends OpMode
     public static final boolean DEBUG_ENABLED = true;
     private static final String sampleConfigData =
             "INIT,X=1.0,Y=1.0,HEADING=20,ALLIANCE=RED;"
+            + "#! Test comment string;"
             + "STARTBLOCK;"
             + "NAVIGATION,EVENT=MoveEvent,TIME=4000;"
             + "NAVIGATION,EVENT=TurnEvent,TIME=-525;"

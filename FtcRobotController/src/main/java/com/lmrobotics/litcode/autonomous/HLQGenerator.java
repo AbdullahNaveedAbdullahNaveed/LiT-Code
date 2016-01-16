@@ -89,8 +89,13 @@ public class HLQGenerator
         for (String line : lines)
         {
             ConcurrentHashMap<String, String> keySet = makeKeySet(line);
+            // A comment instruction, ignore it
+            if (keySet == null)
+            {
+                continue;
+            }
             // Initial robot data, like starting position, etc.
-            if (keySet.containsKey("INIT"))
+            else if (keySet.containsKey("INIT"))
             {
                 initSettings = makeInitialSettings(keySet);
             }
@@ -127,14 +132,20 @@ public class HLQGenerator
     }
 
     /**
-     * @param cmdLine the comma-delimited set of key and key:value pairs
+     * @param cmdString the comma-delimited set of key and key:value pairs
      * @return a map with no-value keys (STARTBLOCK, etc) having an empty
-     * 		string for a value
+     * 		string for a value, or null if the string indicates a comment
      */
-    private static ConcurrentHashMap<String, String> makeKeySet(String cmdLine)
+    private static ConcurrentHashMap<String, String> makeKeySet(String cmdString)
     {
         ConcurrentHashMap<String, String> keys = new ConcurrentHashMap<String, String>();
-        String[] pairs = cmdLine.split(",");
+        // String is a comment; this line should be ignored, so return null
+        if (cmdString.startsWith("#!"))
+        {
+            SampleAutoOpMode.telemetryAccess.addData("INFO", "Encountered Comment line.");
+            return null;
+        }
+        String[] pairs = cmdString.split(",");
         for (String pair : pairs)
         {
             if (pair.contains("="))
@@ -181,7 +192,6 @@ public class HLQGenerator
                             value = new Integer(toInteger(keyVal));
                             break;
                         case X:
-                            value = new Double(toDouble(keyVal));
                             // Fall Through
                         case Y:
                             value = new Double(toDouble(keyVal));
