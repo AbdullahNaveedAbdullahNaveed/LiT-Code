@@ -34,7 +34,17 @@ public class DriveSystem
         // Reverse motors as necessary here
     }
 
-    /** Basic constructor. */
+    /** Legacy constructor, used for the initial setup of the drive system.
+     * Use DriveSystem.setup(hardwareMap) then new DriveSystem()
+     * @param hardwareMap the hardware map to get drive motors from
+     */
+    @Deprecated
+    public DriveSystem(HardwareMap hardwareMap)
+    {
+        setup(hardwareMap);
+    }
+
+    /** Basic constructor, use this to gain access to the drive system once it has been setup. */
     public DriveSystem()
     {
     }
