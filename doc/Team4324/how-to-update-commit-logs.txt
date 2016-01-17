@@ -1,0 +1,23 @@
+To get the github logs, open the git shell and change to the LiT-Code directory ("cd LiT-Code").
+
+Then copy and paste (right click in the git shell window) the following line:
+git log --pretty=format:"%w(0,0,4)commit %H%nAuthor: %an%nDate: %cd%nSubject: %B%n" --date=short --reverse > gitlog.log
+
+This will create a gitlog.log file in the LiT-Code folder, open it, go to the end and copy the logs that have not
+yet been added to the GitHub Commit Logs word document.
+
+When you paste the new logs onto the end of the last page, make sure they match the following formatting
+(You can just CTRL + A to select it all):
+- Font size 12
+- Font: Calibri (Body)
+- Line spacing 1.0
+- Remove space before and after paragraph (should be near the Line spacing option, possibly in a drop down menu)
+	- DO NOT manually remove any empty lines (except an extra one when you pasted in the new logs),
+		this will mess up the formatting of the document
+- Change font color to black lighter 25% (to preserve ink)
+
+Next print out only the last few pages that contain the logs you added (ie if unsure start with the
+last page # currently in the notebook).
+
+Lastly, update the "Last Updated: MM/DD/YYYY" date on the first page heading to the current date, and print this
+first page and put itin the notebook.
