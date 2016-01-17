@@ -1,5 +1,6 @@
 package com.lmrobotics.litcode.devices;
 
+import com.lmrobotics.litcode.autonomous.opmodes.AutoOpModeBase;
 import com.lmrobotics.litcode.autonomous.opmodes.SampleAutoOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -57,7 +58,7 @@ public class DriveSystem
     {
         if (!isSetup)
         {
-            SampleAutoOpMode.telemetryAccess.addData(
+            AutoOpModeBase.telemetryAccess.addData(
                     "WARNING",
                     "Attempted to access drive system before setup."
             );
@@ -86,7 +87,7 @@ public class DriveSystem
     {
         if (!isSetup)
         {
-            SampleAutoOpMode.telemetryAccess.addData(
+            AutoOpModeBase.telemetryAccess.addData(
                     "WARNING",
                     "Attempted to access drive system before setup."
             );

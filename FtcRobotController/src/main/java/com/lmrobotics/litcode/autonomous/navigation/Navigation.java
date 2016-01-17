@@ -1,6 +1,7 @@
 package com.lmrobotics.litcode.autonomous.navigation;
 
 import com.lmrobotics.litcode.autonomous.navigation.events.BaseNavigationEvent;
+import com.lmrobotics.litcode.autonomous.opmodes.AutoOpModeBase;
 import com.lmrobotics.litcode.autonomous.opmodes.SampleAutoOpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -24,29 +25,29 @@ public class Navigation extends EPS
     /** Basic constructor. */
     public Navigation(HardwareMap hardwareMap)
     {
-        com.lmrobotics.litcode.autonomous.opmodes.SampleAutoOpMode.debugHook = "Navigation Init";
+        AutoOpModeBase.debugHook = "Navigation Init";
         ps = new PositionSystem();
-        SampleAutoOpMode.telemetryAccess.addData("INFO", "Navigation Initialized");
+        AutoOpModeBase.telemetryAccess.addData("INFO", "Navigation Initialized");
     }
 
     @Override
     public void init()
     {
-        com.lmrobotics.litcode.autonomous.opmodes.SampleAutoOpMode.debugHook = "Nav Start";
-        SampleAutoOpMode.telemetryAccess.addData("INFO", "Navigation Started");
+        AutoOpModeBase.debugHook = "Nav Start";
+        AutoOpModeBase.telemetryAccess.addData("INFO", "Navigation Started");
     }
 
     @Override
     public void initEvent()
     {
-        com.lmrobotics.litcode.autonomous.opmodes.SampleAutoOpMode.debugHook = "Nav event Init";
+        AutoOpModeBase.debugHook = "Nav event Init";
         getCurrentEvent().initEvent();
     }
 
     @Override
     public void oneCycle()
     {
-        com.lmrobotics.litcode.autonomous.opmodes.SampleAutoOpMode.debugHook = "Nav cycle";
+        AutoOpModeBase.debugHook = "Nav cycle";
         // Invalid navigation event, terminate early and return
         if (getCurrentEvent() == null || !(getCurrentEvent() instanceof BaseNavigationEvent))
         {

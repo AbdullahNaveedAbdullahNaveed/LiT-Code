@@ -5,6 +5,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 import com.lmrobotics.litcode.autonomous.navigation.Navigation;
 import com.lmrobotics.litcode.autonomous.actions.Actions;
+import com.lmrobotics.litcode.autonomous.opmodes.AutoOpModeBase;
 import com.lmrobotics.litcode.autonomous.opmodes.SampleAutoOpMode;
 import com.lmrobotics.litcode.devices.DriveSystem;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -31,7 +32,7 @@ public class EventManager
      */
     public EventManager(HardwareMap hardwareMap, String config, boolean rawConfigData)
     {
-        SampleAutoOpMode.telemetryAccess.addData("INFO", "Initializing Event Manager...");
+        AutoOpModeBase.telemetryAccess.addData("INFO", "Initializing Event Manager...");
         // Initialize the drive system
         DriveSystem.setup(hardwareMap);
         // Create the HLQ when we were given the raw config text
@@ -44,15 +45,15 @@ public class EventManager
         {
             HLQ = HLQGenerator.makeHLQFromFile(config);
         }
-        com.lmrobotics.litcode.autonomous.opmodes.SampleAutoOpMode.debugHook = "EM init EPSs";
+        AutoOpModeBase.debugHook = "EM init EPSs";
         navigation = new Navigation(hardwareMap);
         actions = new Actions(hardwareMap);
-//        SampleAutoOpMode.telemetryAccess.addData("INFO", "Event Manager Initialized");
+//        AutoOpModeBase.telemetryAccess.addData("INFO", "Event Manager Initialized");
     }
 
     public void start()
     {
-        SampleAutoOpMode.telemetryAccess.addData("INFO", "Starting...");
+        AutoOpModeBase.telemetryAccess.addData("INFO", "Starting...");
         // Starts navigation and action systems
         navigation.start();
         actions.start();
@@ -63,7 +64,7 @@ public class EventManager
      */
     public void loop()
     {
-        com.lmrobotics.litcode.autonomous.opmodes.SampleAutoOpMode.debugHook = "em loop";
+        AutoOpModeBase.debugHook = "em loop";
         // If both navigation and actions done...
         if (navigation.isWaitingForNewEvents() && actions.isWaitingForNewEvents())
         {
@@ -72,7 +73,7 @@ public class EventManager
             // If we just finished the last block of events, stop running
             if (nextEB == null)
             {
-                SampleAutoOpMode.telemetryAccess.addData("INFO", "All Events Finshed");
+                AutoOpModeBase.telemetryAccess.addData("INFO", "All Events Finshed");
                 return;
             }
             // Queue the next sets of events

@@ -80,7 +80,7 @@ public class MoveEvent extends BaseNavigationEvent
     @Override
     public void oneCycle()
     {
-        com.lmrobotics.litcode.autonomous.opmodes.SampleAutoOpMode.debugHook = "Nav move";
+        com.lmrobotics.litcode.autonomous.opmodes.AutoOpModeBase.debugHook = "Nav move";
         // Time-based movement
         if (isUsingTime())
         {

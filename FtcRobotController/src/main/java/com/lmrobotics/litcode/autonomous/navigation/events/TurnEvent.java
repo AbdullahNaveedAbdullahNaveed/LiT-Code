@@ -47,7 +47,7 @@ public class TurnEvent extends BaseNavigationEvent
     @Override
     public void oneCycle()
     {
-        com.lmrobotics.litcode.autonomous.opmodes.SampleAutoOpMode.debugHook = "Nav turn";
+        com.lmrobotics.litcode.autonomous.opmodes.AutoOpModeBase.debugHook = "Nav turn";
         // Time-based turning
         if (isUsingTime())
         {

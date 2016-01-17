@@ -1,6 +1,7 @@
 package com.lmrobotics.litcode.autonomous;
 
 import com.lmrobotics.litcode.autonomous.navigation.events.MoveEvent;
+import com.lmrobotics.litcode.autonomous.opmodes.AutoOpModeBase;
 import com.lmrobotics.litcode.autonomous.opmodes.SampleAutoOpMode;
 
 import java.util.LinkedList;
@@ -75,7 +76,7 @@ public class HLQGenerator
      */
     private static HLQ buildHLQ(String rawData)
     {
-		com.lmrobotics.litcode.autonomous.opmodes.SampleAutoOpMode.debugHook = "HLQ Build";
+		AutoOpModeBase.debugHook = "HLQ Build";
         ConcurrentLinkedQueue<EventBlock> eventQueue = new ConcurrentLinkedQueue<EventBlock>();
         ConcurrentHashMap<HLQ.InitSetting, Object> initSettings = new ConcurrentHashMap<HLQ.InitSetting, Object>();
         // Remove certain whitespace characters then separate data by semicolon
@@ -127,7 +128,7 @@ public class HLQGenerator
                 // TODO Indicate invalid line of data to user
             }
         }
-        //        SampleAutoOpMode.telemetryAccess.addData("INFO", "Bad -Lines:" + Integer.toString(invalidLines) + " -Events:" + Integer.toString(invalidEvents));
+        //        AutoOpModeBase.telemetryAccess.addData("INFO", "Bad -Lines:" + Integer.toString(invalidLines) + " -Events:" + Integer.toString(invalidEvents));
         return new HLQ(initSettings, eventQueue);
     }
 
@@ -142,7 +143,7 @@ public class HLQGenerator
         // String is a comment; this line should be ignored, so return null
         if (cmdString.startsWith("#!"))
         {
-            SampleAutoOpMode.telemetryAccess.addData("INFO", "Encountered Comment line.");
+            AutoOpModeBase.telemetryAccess.addData("INFO", "Encountered Comment line.");
             return null;
         }
         String[] pairs = cmdString.split(",");
@@ -153,7 +154,7 @@ public class HLQGenerator
                 String[] key_val = pair.split("=");
                 if (key_val.length <= 1)
                 {
-                    SampleAutoOpMode.telemetryAccess.addData(
+                    AutoOpModeBase.telemetryAccess.addData(
                             "WARNING",
                             "\'"
                                     + pair
@@ -206,7 +207,7 @@ public class HLQGenerator
                 }
                 catch (NumberFormatException e)
                 {
-                    SampleAutoOpMode.telemetryAccess.addData(
+                    AutoOpModeBase.telemetryAccess.addData(
                             "WARNING",
                             "INIT value \'"
                                     + is.toString()

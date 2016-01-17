@@ -1,5 +1,6 @@
 package com.lmrobotics.litcode.autonomous;
 
+import com.lmrobotics.litcode.autonomous.opmodes.AutoOpModeBase;
 import com.lmrobotics.litcode.autonomous.opmodes.SampleAutoOpMode;
 
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -24,7 +25,7 @@ public abstract class EPS
     /** Normal EPS setup. */
     public EPS()
     {
-        com.lmrobotics.litcode.autonomous.opmodes.SampleAutoOpMode.debugHook = "EPS Init";
+        com.lmrobotics.litcode.autonomous.opmodes.AutoOpModeBase.debugHook = "EPS Init";
         queue = new ConcurrentLinkedQueue<AutonomousEvent>();
     }
 
@@ -45,7 +46,7 @@ public abstract class EPS
     /** Starts up the thread for this EPS and calls the subclass method for unique setup. */
     public void start()
     {
-        com.lmrobotics.litcode.autonomous.opmodes.SampleAutoOpMode.debugHook = "EPS start";
+        com.lmrobotics.litcode.autonomous.opmodes.AutoOpModeBase.debugHook = "EPS start";
         // Prepare this EPS for receiving new events
         waitForNewEvents();
         // Initialize the child class
@@ -57,7 +58,7 @@ public abstract class EPS
      */
     public void runUnlessDone()
     {
-        com.lmrobotics.litcode.autonomous.opmodes.SampleAutoOpMode.debugHook = "EPS run unless dn";
+        AutoOpModeBase.debugHook = "EPS run unless dn";
         if (!isWaitingForNewEvents())
         {
             run();
@@ -67,7 +68,7 @@ public abstract class EPS
     /** Run one cycle of this system. */
     private void run()
     {
-        com.lmrobotics.litcode.autonomous.opmodes.SampleAutoOpMode.debugHook = "EPS run";
+        AutoOpModeBase.debugHook = "EPS run";
         // Check if the current event is finished, and move to the next one
         if (getCurrentEvent() == null || terminateEarly || currentEventFinished())
         {
@@ -86,7 +87,7 @@ public abstract class EPS
             }
             // initialize the new event
             initEvent();
-            SampleAutoOpMode.telemetryAccess.addData("INFO", "Starting Event: " + getCurrentEvent().getClass().getSimpleName());
+            AutoOpModeBase.telemetryAccess.addData("INFO", "Starting Event: " + getCurrentEvent().getClass().getSimpleName());
         }
         // Run one cycle
         oneCycle();
@@ -140,7 +141,7 @@ public abstract class EPS
      */
     private void waitForNewEvents()
     {
-//        SampleAutoOpMode.telemetryAccess.addData("INFO", "Previous Event Finished");
+//        AutoOpModeBase.telemetryAccess.addData("INFO", "Previous Event Finished");
         waitingForNewEvents = true;
     }
 }

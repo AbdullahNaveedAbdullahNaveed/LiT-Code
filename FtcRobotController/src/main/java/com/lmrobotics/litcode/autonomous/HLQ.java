@@ -1,5 +1,6 @@
 package com.lmrobotics.litcode.autonomous;
 
+import com.lmrobotics.litcode.autonomous.opmodes.AutoOpModeBase;
 import com.lmrobotics.litcode.autonomous.opmodes.SampleAutoOpMode;
 
 import java.util.concurrent.ConcurrentHashMap;
@@ -37,7 +38,7 @@ public class HLQ
 		{
 			if (!(initSettings.containsKey(s)))
 			{
-                SampleAutoOpMode.telemetryAccess.addData(
+				AutoOpModeBase.telemetryAccess.addData(
                         "WARNING",
                         "Initial setting \'"
                                 + s.toString()
@@ -66,7 +67,7 @@ public class HLQ
 		Object value = initSettings.get(setting);
 		if (value == null)
 		{
-            SampleAutoOpMode.telemetryAccess.addData(
+			AutoOpModeBase.telemetryAccess.addData(
                     "WARNING",
                     "Attempted to get uninitialized initial setting "
                             + "\'"

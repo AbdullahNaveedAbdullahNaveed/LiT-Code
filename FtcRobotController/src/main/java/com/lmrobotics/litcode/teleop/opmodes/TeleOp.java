@@ -1,5 +1,6 @@
 package com.lmrobotics.litcode.teleop.opmodes;
 
+import com.lmrobotics.litcode.autonomous.opmodes.AutoOpModeBase;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.lmrobotics.litcode.devices.DriveSystem;
 import com.lmrobotics.litcode.devices.ArmSystem;
@@ -19,6 +20,8 @@ public class TeleOp extends OpMode
     @Override
     public void init()
     {
+        // AutoOpModeBase is used to get telemetry by most classes
+        AutoOpModeBase.telemetryAccess = telemetry;
         drive = new DriveSystem(this.hardwareMap);
 //        arm = new ArmSystem(this.hardwareMap);
     }
