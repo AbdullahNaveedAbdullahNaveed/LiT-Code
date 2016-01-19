@@ -33,6 +33,10 @@ public class DriveSystem
         rightMotors[0] = hardwareMap.dcMotor.get("frontRightDrive");
         rightMotors[1] = hardwareMap.dcMotor.get("backRightDrive");
         // Reverse motors as necessary here
+        for (DcMotor motor : leftMotors)
+        {
+            motor.setDirection(DcMotor.Direction.REVERSE);
+        }
     }
 
     /** Legacy constructor, used for the initial setup of the drive system.
