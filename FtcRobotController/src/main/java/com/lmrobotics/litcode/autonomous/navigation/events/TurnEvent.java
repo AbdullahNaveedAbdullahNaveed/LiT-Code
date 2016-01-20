@@ -76,11 +76,11 @@ public class TurnEvent extends BaseNavigationEvent
         long elapsed = now - getStartTime();
         boolean result = false;
         // TODO check if the event is angle or time based then check if done
-        if( elapsed >= Math.abs(getTime()))
+        if(elapsed >= Math.abs(getTime()))
         {
             result = true;
         }
-        return false;
+        return result;
     }
 
     @Override

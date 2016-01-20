@@ -36,6 +36,8 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  */
 public class HLQGenerator
 {
+    private static final boolean ALLIANCE_SWITCH_BLUE = false;
+    public static boolean allianceSwitchVal = !ALLIANCE_SWITCH_BLUE;
     public static int invalidLines = 0;
     public static int invalidEvents = 0;
     @Deprecated
@@ -66,6 +68,7 @@ public class HLQGenerator
      */
     public static synchronized HLQ makeHLQFromString(String rawData)
     {
+        AutoOpModeBase.telemetryAccess.addData("AS", allianceSwitchVal);
         // Build the queue
         return buildHLQ(rawData);
     }
@@ -179,6 +182,14 @@ public class HLQGenerator
     {
         ConcurrentHashMap<HLQ.InitSetting, Object> settings =
                 new ConcurrentHashMap<HLQ.InitSetting, Object>();
+        // Set the alliance init setting to the switch value
+        String alliance = "red";
+        if (allianceSwitchVal == ALLIANCE_SWITCH_BLUE)
+        {
+            alliance = "blue";
+        }
+        settings.put(HLQ.InitSetting.ALLIANCE, alliance);
+        // All other init values
         for (HLQ.InitSetting is : HLQ.InitSetting.values())
         {
             if (keys.containsKey(is.toString()))

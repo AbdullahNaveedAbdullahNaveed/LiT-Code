@@ -1,6 +1,7 @@
 package com.lmrobotics.litcode.autonomous.opmodes;
 
 import com.lmrobotics.litcode.autonomous.EventManager;
+import com.lmrobotics.litcode.autonomous.HLQGenerator;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.robocol.Telemetry;
 
@@ -44,6 +45,7 @@ public abstract class AutoOpModeBase extends OpMode
     {
         // Setup telemetry access
         telemetryAccess = telemetry;
+        HLQGenerator.allianceSwitchVal = hardwareMap.digitalChannel.get("allianceSwitch").getState();
         // If a bug has already occurred, return to prevent a downstream bug from occurring
         if (bugOccurred)
         {
@@ -70,7 +72,7 @@ public abstract class AutoOpModeBase extends OpMode
                 debugHook = "No event config";
                 Exception e = new Exception("No event config was specified by opmode");
                 throw e;
-            }
+            }g
         }
         catch (Exception e)
         {
