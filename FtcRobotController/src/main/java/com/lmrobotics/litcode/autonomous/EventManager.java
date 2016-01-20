@@ -19,8 +19,13 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
  */
 public class EventManager
 {
-    private HLQ HLQ;
+    /** The high-level queue object which manages the event block queue and initial robot
+     * settings.
+     */
+    private static HLQ hlq;
+    /** The event processing subsystem for navigation events. */
     private Navigation navigation;
+    /** The event processing subsystem for action events. */
     private Actions actions;
 
     /** Normal constructor.
@@ -38,12 +43,12 @@ public class EventManager
         // Create the HLQ when we were given the raw config text
         if (rawConfigData)
         {
-            HLQ = HLQGenerator.makeHLQFromString(config);
+            hlq = HLQGenerator.makeHLQFromString(config);
         }
         // Create the HLQ when we were given the name of a config file
         else
         {
-            HLQ = HLQGenerator.makeHLQFromFile(config);
+            hlq = HLQGenerator.makeHLQFromFile(config);
         }
         AutoOpModeBase.debugHook = "EM init EPSs";
         navigation = new Navigation(hardwareMap);
@@ -69,7 +74,7 @@ public class EventManager
         if (navigation.isWaitingForNewEvents() && actions.isWaitingForNewEvents())
         {
             // Get next event block
-            EventBlock nextEB = HLQ.getNextEventBlock();
+            EventBlock nextEB = hlq.getNextEventBlock();
             // If we just finished the last block of events, stop running
             if (nextEB == null)
             {
@@ -83,5 +88,16 @@ public class EventManager
         // runs navigation and action events unless finished
         navigation.runUnlessDone();
         actions.runUnlessDone();
+    }
+
+    /** Gets the specified initial setting of the robot, like the starting position, alliance,
+     * etc.
+     * @param setting the initial robot setting to use
+     * @return the initial setting, wrapped in an object (may need to cast to
+     *      the correct type before using)
+     */
+    public static Object getInitialSetting(HLQ.InitSetting setting)
+    {
+        return hlq.getInitialSetting(setting);
     }
 }
