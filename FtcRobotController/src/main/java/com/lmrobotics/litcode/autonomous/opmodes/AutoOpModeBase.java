@@ -72,7 +72,7 @@ public abstract class AutoOpModeBase extends OpMode
                 debugHook = "No event config";
                 Exception e = new Exception("No event config was specified by opmode");
                 throw e;
-            }g
+            }
         }
         catch (Exception e)
         {

@@ -1,5 +1,8 @@
 package com.lmrobotics.litcode.autonomous.navigation.events;
 
+import com.lmrobotics.litcode.autonomous.EventManager;
+import com.lmrobotics.litcode.autonomous.HLQ;
+
 /** A basic navigation event to turn to a certain heading. */
 public class TurnEvent extends BaseNavigationEvent
 {
@@ -35,7 +38,6 @@ public class TurnEvent extends BaseNavigationEvent
      */
     public int getHeading()
     {
-        // TODO Flip angle based on alliance initial setting
         return heading;
     }
 
@@ -87,5 +89,17 @@ public class TurnEvent extends BaseNavigationEvent
     public void cleanup()
     {
         drive.stopMotors();
+    }
+
+    @Override
+    public long getTime()
+    {
+        // On blue alliance
+        if (EventManager.getInitialSetting(HLQ.InitSetting.ALLIANCE).equals("blue"))
+        {
+            return -super.getTime();
+        }
+        // On red alliance
+        return super.getTime();
     }
 }

@@ -7,7 +7,7 @@ public class SampleAutoOpMode extends AutoOpModeBase
     @Override
     protected void setEventConfig()
     {
-        this.configData = "INIT,X=1.0,Y=1.0,HEADING=20,ALLIANCE=RED;"
+        this.configData = "INIT,X=1.0,Y=1.0,HEADING=20;"
                 + "#! Test comment string;"
                 + "STARTBLOCK;"
                 + "NAVIGATION,EVENT=MoveEvent,TIME=4000;"
